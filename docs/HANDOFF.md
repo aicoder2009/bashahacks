@@ -9,18 +9,11 @@ Written November 13, 2026, the day before the event, so a new Claude session (or
 - **Tested locally with the fake AI:** the full event (admin, announcements, AI limits, judging, podium), the solo student flow, the team flow, 20 unit tests, a load check, and the production build.
 - **Not tested at all yet:** real AI calls, creating OpenRouter keys, changing a key's limit, and the live site end to end.
 
-## The blocker right now
+## Database (fixed Nov 13)
 
-`https://bashahacks.vercel.app/api/health` reports `"database":{"found":false}`. The Vercel project has no database connected, so every page that needs data fails (including the officer login).
+A free Neon database, `bashahacks-db`, is connected to the Vercel project in all environments. `/api/health` reports `"ok":true` and the tables have been created.
 
-Fix, in the Vercel dashboard:
-
-1. Open the `bashahacks` project, then the **Storage** tab.
-2. Create a **Neon** Postgres database (or connect an existing one). All environments, no prefix.
-3. **Deployments**, then **Redeploy** the newest one.
-4. Reload `/api/health`. It should say `"ok":true`. The tables create themselves on first use.
-
-The other settings are already in place according to the health check: `APP_SECRET`, `ADMIN_PASSCODE`, `OPENROUTER_MANAGEMENT_KEY`, `OPENROUTER_API_KEY`.
+Development and Preview point at the same live database. Do not pull the Vercel env vars and run the browser or load tests against them, because those tests would write into the event data. Run the tests against a local Postgres instead.
 
 ## Decisions already made (do not reopen without Karthick)
 

@@ -179,6 +179,37 @@ export function Stat({ label, value, sub }: { label: string; value: React.ReactN
   );
 }
 
+/** A Stat with a half-circle gauge. `ratio` is 0 to 1; `warn` turns it amber past 80% and red when full. */
+export function GaugeStat({ label, value, sub, ratio, warn = false }: { label: string; value: React.ReactNode; sub?: React.ReactNode; ratio: number; warn?: boolean }) {
+  const pct = Math.max(0, Math.min(1, Number.isFinite(ratio) ? ratio : 0));
+  const tone = warn && pct >= 0.999 ? "text-red" : warn && pct > 0.8 ? "text-amber" : "text-accent";
+  const arc = "M 6 34 A 28 28 0 0 1 62 34";
+  return (
+    <div className="card relative min-w-0 px-4 py-3">
+      <div className="label pr-12">{label}</div>
+      <div className="mono mt-1 truncate pr-12 text-2xl font-semibold leading-tight">{value}</div>
+      {sub ? <div className="mt-0.5 truncate text-xs text-muted">{sub}</div> : null}
+      <svg
+        viewBox="0 0 68 40"
+        className="absolute right-3 top-3 w-12"
+        role="meter"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(pct * 100)}
+      >
+        <path d={arc} pathLength={100} fill="none" strokeWidth={6} strokeLinecap="round" className="stroke-line" />
+        {pct > 0 ? (
+          <path d={arc} pathLength={100} fill="none" strokeWidth={6} strokeLinecap="round" stroke="currentColor" strokeDasharray={`${pct * 100} 100`} className={`${tone} transition-[stroke-dasharray] duration-500`} />
+        ) : null}
+        <text x={34} y={36} textAnchor="middle" className="mono fill-muted" fontSize={10}>
+          {Math.round(pct * 100)}%
+        </text>
+      </svg>
+    </div>
+  );
+}
+
 export function Empty({ children }: { children: React.ReactNode }) {
   return <p className="rounded-lg border border-dashed border-line px-4 py-6 text-center text-sm text-muted">{children}</p>;
 }

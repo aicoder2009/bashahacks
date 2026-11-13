@@ -3,7 +3,7 @@ import { timeOfDay } from "@/lib/client";
 import { fmtClock } from "@/lib/text";
 import type { AdminState } from "@/lib/admin";
 import { Composer } from "./Announce";
-import { Section, Stat, phaseLabel, useAdmin, useBusy, useClock, usd, type TabId } from "./shared";
+import { GaugeStat, Section, Stat, phaseLabel, useAdmin, useBusy, useClock, usd, type TabId } from "./shared";
 
 type Warning = { key: string; text: string; tab: TabId; fix: string };
 
@@ -64,10 +64,10 @@ export function clockFor(settings: AdminState["settings"], now: number): { capti
   return { caption: "Building is closed", value: fmtClock(0) };
 }
 
-export function WarnIcon() {
+export function WarnIcon({ className = "text-amber" }: { className?: string }) {
   return (
     <svg
-      className="mr-2 inline-block align-[-2px] text-amber"
+      className={`mr-2 inline-block align-[-2px] ${className}`}
       width="14"
       height="14"
       viewBox="0 0 24 24"
@@ -209,8 +209,8 @@ export function OverviewTab() {
         <Stat label="Students" value={counts.students} />
         <Stat label="Teams" value={counts.teams} />
         <Stat label="Published" value={counts.published} sub={`of ${counts.teams} teams`} />
-        <Stat label="Submitted" value={counts.submitted} sub={`of ${counts.teams} teams`} />
-        <Stat label="AI spent" value={usd(ai.totalSpent)} sub={`of ${usd(settings.totalBudgetUsd)} budget`} />
+        <GaugeStat label="Submitted" value={counts.submitted} sub={`of ${counts.teams} teams`} ratio={counts.teams ? counts.submitted / counts.teams : 0} />
+        <GaugeStat label="AI spent" value={usd(ai.totalSpent)} sub={`of ${usd(settings.totalBudgetUsd)} budget`} ratio={settings.totalBudgetUsd ? ai.totalSpent / settings.totalBudgetUsd : 0} warn />
       </div>
 
       <Section title="Send announcement" hint="Students get a pop-up with a chime, and it shows on the TV.">

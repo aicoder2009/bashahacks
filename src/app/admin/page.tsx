@@ -147,21 +147,18 @@ function Dashboard({ tab, loadError }: { tab: TabId; loadError: string }) {
                     onClick={() => go(t.id)}
                     aria-current={current ? "page" : undefined}
                     className={`flex h-9 w-full items-center justify-between gap-3 whitespace-nowrap rounded-lg border px-3 text-left text-sm font-medium transition-colors ${
-                      current ? "border-line bg-panel2 text-fg" : "border-transparent text-muted hover:bg-panel2 hover:text-fg"
+                      current ? "border-fg bg-fg font-semibold text-bg" : "border-transparent text-muted hover:bg-panel2 hover:text-fg"
                     }`}
                   >
-                    <span className="flex items-center gap-2">
-                      <span className={`h-3.5 w-0.5 rounded-full ${current ? "bg-accent" : "bg-transparent"}`} aria-hidden />
-                      {t.label}
-                    </span>
+                    <span>{t.label}</span>
                     {t.id === "overview" && warnings > 0 ? (
-                      <span className="mono inline-flex items-center text-xs text-amber">
-                        <WarnIcon />
+                      <span className={`mono inline-flex items-center text-xs ${current ? "" : "text-amber"}`}>
+                        <WarnIcon className={current ? "" : "text-amber"} />
                         {warnings}
                         <span className="sr-only"> things to check</span>
                       </span>
                     ) : badge[t.id] ? (
-                      <span className="mono text-xs text-muted">{badge[t.id]}</span>
+                      <span className={`mono text-xs ${current ? "opacity-70" : "text-muted"}`}>{badge[t.id]}</span>
                     ) : null}
                   </button>
                 </li>
