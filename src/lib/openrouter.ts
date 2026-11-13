@@ -123,17 +123,17 @@ export async function listModels(): Promise<ModelInfo[]> {
   }
 }
 
-// Good, affordable coding models, best first. The first one OpenRouter actually offers is used
-// unless an officer picks a different model in admin.
+// Coding models in order of preference. The first one OpenRouter actually offers is used unless an
+// officer picks a different model in admin. Sonnet leads because beginners cannot debug what a weaker
+// model gets wrong; Haiku is about twenty times cheaper and is the lever if the budget runs low.
 const PREFERRED = [
-  /^anthropic\/claude-haiku-5/,
-  /^anthropic\/claude-haiku-4\.5/,
-  /^anthropic\/claude-haiku/,
+  /^anthropic\/claude-sonnet-5(\.\d+)?$/,
+  /^anthropic\/claude-sonnet-4\.\d+$/,
+  /^anthropic\/claude-haiku-5(\.\d+)?$/,
+  /^anthropic\/claude-haiku-4\.5$/,
   /^google\/gemini-3\.\d-flash$/,
-  /^google\/gemini-2\.5-flash$/,
-  /^anthropic\/claude-sonnet/,
 ];
-const FALLBACK_MODEL = "anthropic/claude-haiku-5.5";
+const FALLBACK_MODEL = "anthropic/claude-sonnet-5.5";
 
 export async function pickDefaultModel(): Promise<string> {
   const list = await listModels();

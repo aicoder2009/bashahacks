@@ -17,8 +17,10 @@ DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 2. Log in at `/admin`.
 3. **AI tab**
    - Press **Check OpenRouter balance**. It should show about $50. Auto top-up must be off in the OpenRouter account.
+   - Check the model. It should say `anthropic/claude-sonnet-5.5` (or "auto", which picks it).
+   - Check the starting amount per team. It should be $4.
    - Press **Test AI**. You should get a short friendly sentence back and a tiny cost.
-   - Press **Prepare team keys** with 20. The pool should then show 20 free keys.
+   - Press **Prepare team keys** with 12. The pool should then show 12 free keys. You can make more at any time.
 4. **Event tab**: check the start time (9:30 AM) and end time (12:30 PM), and that Auto start and Auto end are on.
 5. **Settings tab**: copy the TV link, write down the event code and the judge passcode.
 6. Do one practice round with another officer: join as a student, build something, publish, submit, score it at `/judges`, then run the podium from the Judging tab.
@@ -59,7 +61,11 @@ They can press **Undo**, or open **History** and go back to a version that worke
 3. If the balance is used up, the event budget is spent. AI stays off. Students can still edit their code by hand, publish, and submit.
 
 **The AI bill is climbing too fast.**
-AI tab, **Pause AI for everyone**. Students keep their apps and can still publish and submit. Turn it back on when you are ready.
+The quickest fix is to switch to the cheaper model: AI tab, **Load models**, pick `anthropic/claude-haiku-5.5`. It costs about a twentieth as much per request, so the money that is left goes much further. It is a bit weaker at coding, so only do this if the budget is really running out.
+If you need a full stop, press **Pause AI for everyone**. Students keep their apps and can still publish and submit. Turn it back on when you are ready.
+
+**More than ten teams showed up.**
+The budget covers ten teams at $4 each. With more, lower the starting amount on the AI tab (for example $3) before the extra teams start building. Teams that already exist keep their limit. The Overview warns you when the limits handed out add up to more than the budget has left.
 
 **We need more time.**
 Overview, **+5 min**. If building already closed, +5 min reopens it for five minutes.
@@ -73,7 +79,9 @@ Check [vercel-status.com](https://www.vercel-status.com). Students' work is save
 ## Spending limits, in one place
 
 - OpenRouter account: $50 of credits, auto top-up off. This is the hard ceiling.
-- Each team key: $2.50 cap, enforced by OpenRouter.
+- Management key: $43 hard spend cap, covering the team keys and the test key.
+- Each team key: $4 cap, enforced by OpenRouter. Ten teams fit in the budget at that amount.
+- Model: `anthropic/claude-sonnet-5.5`, roughly 6 to 10 cents per request, so $4 is about 40 to 65 requests.
 - Shared backup key: $7 cap. Used only if a team has no key of its own. The Teams tab marks teams that are on it.
 - The platform also stops all AI one dollar before the total budget set in the AI tab.
 - Students never see dollars, only a bar that says how much AI they have left.
