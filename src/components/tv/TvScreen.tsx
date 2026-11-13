@@ -74,6 +74,11 @@ function Takeover({ announcement }: { announcement: TvAnnouncement }) {
   );
 }
 
+function toggleFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else document.documentElement.requestFullscreen?.().catch(() => {});
+}
+
 export default function TvScreen({ tvKey }: { tvKey: string }) {
   const [data, setData] = useState<TvData | null>(null);
   const [invalid, setInvalid] = useState(false);
@@ -82,6 +87,8 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
   const [takeover, setTakeover] = useState<TvAnnouncement | null>(null);
   const [burst, setBurst] = useState(0);
   const [sound, setSound] = useState(false);
+  const [cursorHidden, setCursorHidden] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const offsetRef = useRef<number | null>(null);
   const lastAnnouncement = useRef<number | null>(null);
@@ -115,6 +122,30 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
     return () => {
       window.removeEventListener("pointerdown", on);
       window.removeEventListener("keydown", on);
+    };
+  }, []);
+
+  // A click anywhere hides the cursor, and the next click brings it back.
+  useEffect(() => {
+    const toggle = (e: PointerEvent) => {
+      if ((e.target as Element | null)?.closest?.("[data-tv-control]")) return;
+      setCursorHidden((h) => !h);
+    };
+    window.addEventListener("pointerdown", toggle);
+    return () => window.removeEventListener("pointerdown", toggle);
+  }, []);
+
+  // Full screen: the button, or the F key. Track it so the button label stays right after Esc.
+  useEffect(() => {
+    const sync = () => setFullscreen(!!document.fullscreenElement);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) toggleFullscreen();
+    };
+    document.addEventListener("fullscreenchange", sync);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("fullscreenchange", sync);
+      window.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -177,7 +208,7 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
   const stale = lastOk > 0 && now - offset - lastOk > 9000;
 
   return (
-    <div className={`flex h-screen w-screen flex-col overflow-hidden bg-bg text-fg ${sound ? "cursor-none" : ""}`} style={{ padding: `${u(1.8)} ${u(2.5)}`, gap: u(1.6) }}>
+    <div className={`flex h-screen w-screen flex-col overflow-hidden bg-bg text-fg ${cursorHidden ? "cursor-none" : ""}`} style={{ padding: `${u(1.8)} ${u(2.5)}`, gap: u(1.6) }}>
       <header className="flex shrink-0 items-center justify-between" style={{ gap: u(2) }}>
         <div className="flex min-w-0 items-baseline" style={{ gap: u(1.8) }}>
           <TvLogo />
@@ -215,9 +246,19 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
       {showTakeover ? <Takeover key={showTakeover.id} announcement={showTakeover} /> : null}
       <Confetti burst={burst} big />
 
-      {sound ? null : (
-        <div className="mono fixed z-[70] text-muted opacity-70" style={{ right: u(1), bottom: u(0.5), fontSize: u(0.85) }}>
-          Click once to turn on sound
+      {cursorHidden && sound ? null : (
+        <div className="mono fixed z-[70] flex items-center text-muted" style={{ right: u(1), bottom: u(0.5), gap: u(1), fontSize: u(0.85) }}>
+          <span className="opacity-70">{sound ? "Click to hide the cursor" : "Click once to turn on sound"}</span>
+          <button
+            type="button"
+            data-tv-control
+            onClick={toggleFullscreen}
+            className="rounded-md border border-line bg-panel text-fg hover:bg-panel2"
+            style={{ padding: `${u(0.3)} ${u(0.8)}` }}
+            title="Shortcut: F"
+          >
+            {fullscreen ? "Exit full screen" : "Full screen"}
+          </button>
         </div>
       )}
     </div>
