@@ -21,6 +21,7 @@ function defaults(): EventSettings {
     teamsAllowed: true,
     maxTeamSize: 3,
     model: "",
+    reasoningEffort: "high",
     defaultCapUsd: 4,
     totalBudgetUsd: 50,
     aiPausedAll: false,

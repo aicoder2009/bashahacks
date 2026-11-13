@@ -102,7 +102,7 @@ function ModelPicker() {
   return (
     <Section
       title="Model"
-      hint="The AI every team builds with. Auto pick chooses a good, affordable coding model."
+      hint="The AI every team builds with. Auto pick uses GPT-5.6 Luna. Switch to a Claude Sonnet model if Luna's apps are not good enough."
       actions={
         <button className="btn btn-sm" disabled={busy} onClick={load}>
           {models ? "Reload models" : "Load models"}
@@ -119,6 +119,8 @@ function ModelPicker() {
           </button>
         ) : null}
       </div>
+
+      <ReasoningPicker />
 
       {models ? (
         <div className="mt-4">
@@ -180,6 +182,42 @@ function ModelPicker() {
         </div>
       ) : null}
     </Section>
+  );
+}
+
+const EFFORTS: { id: "off" | "low" | "medium" | "high"; label: string; note: string }[] = [
+  { id: "off", label: "Off", note: "Answers right away. For models that do not think." },
+  { id: "low", label: "Low", note: "Quick, a little smarter." },
+  { id: "medium", label: "Medium", note: "Balanced." },
+  { id: "high", label: "High", note: "Best code, slower start, uses more of each team's AI." },
+];
+
+function ReasoningPicker() {
+  const { state, act } = useAdmin();
+  const current = state.settings.reasoningEffort || "high";
+  const [busy, run] = useBusy();
+  const choose = (id: string) =>
+    run(() => act("updateSettings", { patch: { reasoningEffort: id } }, { success: `Thinking level set to ${id}.` }));
+  return (
+    <fieldset className="mt-4">
+      <legend className="label mb-2">Thinking level</legend>
+      <div className="flex flex-wrap gap-2">
+        {EFFORTS.map((e) => (
+          <button
+            key={e.id}
+            type="button"
+            disabled={busy}
+            onClick={() => choose(e.id)}
+            aria-pressed={current === e.id}
+            className={`rounded-lg border px-3 py-2 text-left text-sm ${current === e.id ? "border-accent bg-accent-soft text-accent" : "border-line hover:bg-panel2"}`}
+          >
+            <span className="block font-medium">{e.label}</span>
+            <span className="block text-xs text-muted">{e.note}</span>
+          </button>
+        ))}
+      </div>
+      <p className="mt-2 text-xs text-muted">How hard the AI thinks before it writes code. Applies to every team on its next request. Models that do not think ignore it.</p>
+    </fieldset>
   );
 }
 

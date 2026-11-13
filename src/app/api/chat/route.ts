@@ -13,7 +13,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const LOCK_MS = 200_000;
+// Thinking models count their hidden reasoning against this limit, so it has to leave room for both
+// the thinking and the full app files. At GPT-5.6 Luna prices the worst case is about 4 cents.
 const MAX_TOKENS = 9000;
+const MAX_TOKENS_WITH_REASONING = 32000;
 
 const BLOCK_MESSAGE = {
   cap: "Your team has used all of its AI for now. Ask an officer for more.",
@@ -92,7 +95,7 @@ export async function POST(req: Request) {
       send({ t: "start", userMessageId: userMsg?.id });
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
-          for await (const ev of streamChat({ key: keyInfo!.key, model, messages, maxTokens: MAX_TOKENS })) {
+          for await (const ev of streamChat({ key: keyInfo!.key, model, messages, maxTokens: s.reasoningEffort === "off" ? MAX_TOKENS : MAX_TOKENS_WITH_REASONING, reasoningEffort: s.reasoningEffort })) {
             if (ev.type === "delta") {
               raw += ev.text;
               send({ t: "d", v: ev.text });
