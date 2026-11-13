@@ -110,6 +110,11 @@ function cleanSettingsPatch(input: unknown, current: EventSettings): Partial<Eve
   if ("teamsAllowed" in src) patch.teamsAllowed = bool(src.teamsAllowed, "Teams allowed");
   if ("maxTeamSize" in src) patch.maxTeamSize = int(src.maxTeamSize, 1, 6, "Team size");
   if ("model" in src) patch.model = cleanText(src.model, 120);
+  if ("reasoningEffort" in src) {
+    const v = str(src.reasoningEffort);
+    if (!["off", "low", "medium", "high"].includes(v)) bad("Pick a thinking level: off, low, medium, or high.");
+    patch.reasoningEffort = v as EventSettings["reasoningEffort"];
+  }
   if ("defaultCapUsd" in src) patch.defaultCapUsd = num(src.defaultCapUsd, 0.1, 20, "The starting AI amount per team");
   if ("totalBudgetUsd" in src) patch.totalBudgetUsd = num(src.totalBudgetUsd, 1, 500, "The total AI budget");
   if ("autoStart" in src) patch.autoStart = bool(src.autoStart, "Auto start");

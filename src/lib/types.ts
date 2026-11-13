@@ -1,3 +1,5 @@
+export type ReasoningEffort = "off" | "low" | "medium" | "high";
+
 export type Phase = "lobby" | "hacking" | "judging" | "winners" | "done";
 
 export type AvatarSpec = { s: number; c: number; e: number; m: number; a: number };
@@ -30,6 +32,7 @@ export type EventSettings = {
   teamsAllowed: boolean;
   maxTeamSize: number;
   model: string;
+  reasoningEffort: ReasoningEffort;
   defaultCapUsd: number;
   totalBudgetUsd: number;
   aiPausedAll: boolean;

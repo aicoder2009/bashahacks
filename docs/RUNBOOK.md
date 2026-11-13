@@ -17,7 +17,7 @@ DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 2. Log in at `/admin`.
 3. **AI tab**
    - Press **Check OpenRouter balance**. It should show about $50. Auto top-up must be off in the OpenRouter account.
-   - Check the model. It should say `anthropic/claude-sonnet-5.5` (or "auto", which picks it).
+   - Check the model. It should say `openai/gpt-5.6-luna` (or "auto pick", which uses it), with the thinking level on High.
    - Check the starting amount per team. It should be $4.
    - Press **Test AI**. You should get a short friendly sentence back and a tiny cost.
    - Press **Prepare team keys** with 12. The pool should then show 12 free keys. You can make more at any time.
@@ -61,7 +61,7 @@ They can press **Undo**, or open **History** and go back to a version that worke
 3. If the balance is used up, the event budget is spent. AI stays off. Students can still edit their code by hand, publish, and submit.
 
 **The AI bill is climbing too fast.**
-The quickest fix is to switch to the cheaper model: AI tab, **Load models**, pick `anthropic/claude-haiku-5.5`. It costs about a twentieth as much per request, so the money that is left goes much further. It is a bit weaker at coding, so only do this if the budget is really running out.
+The quickest fix is to lower the thinking level on the AI tab from High to Medium or Low. Each request then costs less. If you switched to a Sonnet model earlier, switching back to `openai/gpt-5.6-luna` saves far more.
 If you need a full stop, press **Pause AI for everyone**. Students keep their apps and can still publish and submit. Turn it back on when you are ready.
 
 **More than ten teams showed up.**
@@ -81,7 +81,8 @@ Check [vercel-status.com](https://www.vercel-status.com). Students' work is save
 - OpenRouter account: $50 of credits, auto top-up off. This is the hard ceiling.
 - Management key: $43 hard spend cap, covering the team keys and the test key.
 - Each team key: $4 cap, enforced by OpenRouter. Ten teams fit in the budget at that amount.
-- Model: `anthropic/claude-sonnet-5.5`, roughly 6 to 10 cents per request, so $4 is about 40 to 65 requests.
+- Model: `openai/gpt-5.6-luna` with the thinking level on High, roughly 2 to 3 cents per request, so $4 is well over 100 requests.
+- If Luna's apps are not good enough: AI tab, **Load models**, pick `anthropic/claude-sonnet-5.5`. It is stronger at coding but costs about 6 to 10 cents per request, so $4 is about 40 to 65 requests.
 - Shared backup key: $7 cap. Used only if a team has no key of its own. The Teams tab marks teams that are on it.
 - The platform also stops all AI one dollar before the total budget set in the AI tab.
 - Students never see dollars, only a bar that says how much AI they have left.

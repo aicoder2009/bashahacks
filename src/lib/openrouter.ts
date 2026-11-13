@@ -124,16 +124,18 @@ export async function listModels(): Promise<ModelInfo[]> {
 }
 
 // Coding models in order of preference. The first one OpenRouter actually offers is used unless an
-// officer picks a different model in admin. Sonnet leads because beginners cannot debug what a weaker
-// model gets wrong; Haiku is about twenty times cheaper and is the lever if the budget runs low.
+// officer picks a different model in admin. GPT-5.6 Luna with high reasoning leads (Karthick's pick,
+// Nov 13): even with heavy thinking it costs a fraction of Sonnet. Sonnet is the step up if Luna's
+// apps disappoint; Haiku stays at the end as the cheapest fallback.
 const PREFERRED = [
+  /^openai\/gpt-5\.\d+-luna$/,
   /^anthropic\/claude-sonnet-5(\.\d+)?$/,
   /^anthropic\/claude-sonnet-4\.\d+$/,
   /^anthropic\/claude-haiku-5(\.\d+)?$/,
   /^anthropic\/claude-haiku-4\.5$/,
   /^google\/gemini-3\.\d-flash$/,
 ];
-const FALLBACK_MODEL = "anthropic/claude-sonnet-5.5";
+const FALLBACK_MODEL = "openai/gpt-5.6-luna";
 
 export async function pickDefaultModel(): Promise<string> {
   const list = await listModels();
@@ -192,6 +194,8 @@ export async function* streamChat(opts: {
   model: string;
   messages: Msg[];
   maxTokens: number;
+  /** How hard a thinking model reasons before answering. Ignored by models that do not think. */
+  reasoningEffort?: "off" | "low" | "medium" | "high";
   signal?: AbortSignal;
 }): AsyncGenerator<StreamEvent> {
   if (mockMode()) {
@@ -210,7 +214,9 @@ export async function* streamChat(opts: {
       model: opts.model,
       messages: opts.messages,
       max_tokens: opts.maxTokens,
-      temperature: 0.6,
+      ...(opts.reasoningEffort && opts.reasoningEffort !== "off"
+        ? { reasoning: { effort: opts.reasoningEffort, exclude: true } }
+        : { temperature: 0.6 }),
       stream: true,
     }),
     signal: opts.signal,
