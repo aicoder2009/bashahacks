@@ -186,7 +186,7 @@ function ModelPicker() {
 function KeyPool() {
   const { state, act, toast } = useAdmin();
   const { ai } = state;
-  const [count, setCount] = useState("20");
+  const [count, setCount] = useState("12");
   const [busy, run] = useBusy();
   const n = Number(count);
   const valid = Number.isInteger(n) && n >= 1 && n <= 30;

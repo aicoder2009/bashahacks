@@ -27,6 +27,17 @@ export function warningsFor(state: AdminState): Warning[] {
     const pct = Math.round((ai.totalSpent / settings.totalBudgetUsd) * 100);
     out.push({ key: "spend", text: `AI spend is at ${pct}% of the budget (${usd(ai.totalSpent)} of ${usd(settings.totalBudgetUsd)}).`, tab: "ai", fix: "Open AI" });
   }
+  // Limits are ceilings, so handing out more than the budget is allowed, but officers should know:
+  // if every team used its full limit, the event-wide stop would pause AI for everyone first.
+  const promised = state.teams.reduce((sum, t) => sum + Math.max(0, t.capUsd - t.spentUsd), 0);
+  if (!ai.mockMode && state.teams.length > 0 && promised > ai.budgetLeft + 0.005) {
+    out.push({
+      key: "promised",
+      text: `Teams could still use up to ${usd(promised)} between them, but the event budget has ${usd(ai.budgetLeft)} left. Lower the starting amount for new teams, or switch to a cheaper model if spending climbs.`,
+      tab: "ai",
+      fix: "Open AI",
+    });
+  }
   if (ai.teamsOnBackup > 0) {
     out.push({
       key: "onbackup",
