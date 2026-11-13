@@ -2,19 +2,45 @@ import { Pool } from "pg";
 
 const g = globalThis as unknown as { __bhPool?: Pool; __bhReady?: Promise<void> };
 
+// Where hosting providers put the database address. Vercel's Neon integration can also add a custom
+// prefix (for example STORAGE_DATABASE_URL), so any variable ending in _DATABASE_URL or _POSTGRES_URL counts.
+const DB_VARS = ["DATABASE_URL", "POSTGRES_URL", "DATABASE_URL_UNPOOLED", "POSTGRES_URL_NON_POOLING", "POSTGRES_PRISMA_URL"];
+
+export function findDatabaseUrl(): { name: string; url: string } | null {
+  for (const name of DB_VARS) {
+    const url = process.env[name];
+    if (url) return { name, url };
+  }
+  for (const [name, url] of Object.entries(process.env)) {
+    if (url && /(_DATABASE_URL|_POSTGRES_URL)$/.test(name) && /^postgres(ql)?:\/\//.test(url)) return { name, url };
+  }
+  return null;
+}
+
+/** Removes options that the driver would read differently from what the address intends; encryption is set below. */
+function cleanUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    for (const k of ["sslmode", "channel_binding", "sslrootcert", "sslcert", "sslkey", "uselibpqcompat"]) u.searchParams.delete(k);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 function pool(): Pool {
   if (!g.__bhPool) {
-    const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
-    if (!url) throw new Error("DATABASE_URL is not set");
-    const local = /127\.0\.0\.1|localhost/.test(url);
+    const found = findDatabaseUrl();
+    if (!found) throw new Error("No database address is set (looked for DATABASE_URL, POSTGRES_URL and similar)");
+    const local = /@(127\.0\.0\.1|localhost)[:/]/.test(found.url);
     g.__bhPool = new Pool({
-      connectionString: url,
+      connectionString: cleanUrl(found.url),
       max: local ? 10 : 5,
       idleTimeoutMillis: 20_000,
       connectionTimeoutMillis: 10_000,
       ssl: local ? undefined : { rejectUnauthorized: true },
     });
-    g.__bhPool.on("error", () => {});
+    g.__bhPool.on("error", (e) => console.error("[db] idle client error", e.message));
   }
   return g.__bhPool;
 }
@@ -149,14 +175,29 @@ WHERE NOT EXISTS (SELECT 1 FROM criteria);
 async function init(): Promise<void> {
   const client = await pool().connect();
   try {
-    await client.query("SELECT pg_advisory_lock(72311114)");
-    try {
-      await client.query(SCHEMA);
-    } finally {
-      await client.query("SELECT pg_advisory_unlock(72311114)");
-    }
+    // A transaction-scoped lock is released on COMMIT, so it also works through Neon's pooled connections.
+    await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_xact_lock(72311114)");
+    await client.query(SCHEMA);
+    await client.query("COMMIT");
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => {});
+    console.error("[db] setting up tables failed", e);
+    throw e;
   } finally {
     client.release();
+  }
+}
+
+/** A quick check for the health page: can we reach the database and are the tables there? */
+export async function checkDatabase(): Promise<{ ok: boolean; code?: string; message?: string }> {
+  try {
+    await ready();
+    await pool().query("SELECT 1 FROM settings LIMIT 1");
+    return { ok: true };
+  } catch (e) {
+    const err = e as { code?: string; message?: string };
+    return { ok: false, code: err.code, message: String(err.message || e).replace(/postgres(ql)?:\/\/\S+/gi, "[address hidden]").slice(0, 240) };
   }
 }
 
