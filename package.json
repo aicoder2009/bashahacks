@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run tests/unit",
-    "test:e2e": "node tests/e2e-student.mjs && node tests/e2e-team.mjs"
+    "test:e2e": "node tests/e2e-event.mjs && node tests/set-phase.mjs hacking && node tests/e2e-student.mjs && node tests/e2e-team.mjs",
+    "test:load": "node tests/load.mjs"
   },
   "dependencies": {
     "@codemirror/lang-css": "^6.3.1",

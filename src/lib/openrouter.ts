@@ -129,17 +129,18 @@ const PREFERRED = [
   /^anthropic\/claude-haiku-5/,
   /^anthropic\/claude-haiku-4\.5/,
   /^anthropic\/claude-haiku/,
-  /^google\/gemini-3.*flash/,
+  /^google\/gemini-3\.\d-flash$/,
   /^google\/gemini-2\.5-flash$/,
-  /^openai\/gpt-5.*mini/,
   /^anthropic\/claude-sonnet/,
 ];
-const FALLBACK_MODEL = "anthropic/claude-haiku-4.5";
+const FALLBACK_MODEL = "anthropic/claude-haiku-5.5";
 
 export async function pickDefaultModel(): Promise<string> {
   const list = await listModels();
   for (const re of PREFERRED) {
-    const hits = list.filter((m) => re.test(m.id) && !/:free|preview|beta/.test(m.id)).sort((a, b) => b.id.localeCompare(a.id));
+    // Skip variants such as ":batch" or ":free" (anything with a colon) and preview builds: students need
+    // the normal live model that streams its answer.
+    const hits = list.filter((m) => re.test(m.id) && !/:|preview|beta/.test(m.id)).sort((a, b) => b.id.localeCompare(a.id));
     if (hits.length) return hits[0].id;
   }
   return FALLBACK_MODEL;
