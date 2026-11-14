@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const LOCK_MS = 200_000;
+const RETRY_WAIT_MS = 1500;
 // Thinking models count their hidden reasoning against this limit, so it has to leave room for both
 // the thinking and the full app files. At GPT-5.6 Luna prices the worst case is about 4 cents.
 const MAX_TOKENS = 9000;
@@ -100,7 +101,9 @@ export async function POST(req: Request) {
     let errorMessage = "";
     try {
       send({ t: "start", userMessageId: userMsg?.id });
-      for (let attempt = 0; attempt < 2; attempt++) {
+      let triedBackup = false;
+      let retried = false;
+      for (;;) {
         try {
           for await (const ev of streamChat({ key: keyInfo!.key, model, messages, maxTokens: s.reasoningEffort === "off" ? MAX_TOKENS : MAX_TOKENS_WITH_REASONING, reasoningEffort: s.reasoningEffort })) {
             if (ev.type === "delta") {
@@ -119,9 +122,16 @@ export async function POST(req: Request) {
           console.error("[chat] AI error", err.status, err.kind, err.message);
           // If this team's own key was refused before anything arrived, fall back to the shared backup key once.
           const backup = process.env.OPENROUTER_API_KEY;
-          if (attempt === 0 && !raw && keyInfo!.source === "team" && backup && (err.kind === "auth" || err.kind === "limit")) {
+          if (!triedBackup && !raw && keyInfo!.source === "team" && backup && (err.kind === "auth" || err.kind === "limit")) {
+            triedBackup = true;
             await q("UPDATE teams SET on_backup=true WHERE id=$1", [team.id]);
             keyInfo = { key: backup, source: "backup" };
+            continue;
+          }
+          // A busy or failing AI provider often works a moment later, so try once more before telling the student.
+          if (!retried && !raw && err.kind === "busy") {
+            retried = true;
+            await new Promise((r) => setTimeout(r, RETRY_WAIT_MS));
             continue;
           }
           if (err.kind === "limit" && keyInfo!.source === "team") {

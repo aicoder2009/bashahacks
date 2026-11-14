@@ -18,8 +18,11 @@ export class AiError extends Error {
   }
 }
 
-function classify(status: number, body: string): AiError {
+export function classify(status: number, body: string): AiError {
   const text = body.slice(0, 300);
+  // The company behind the model refused the request, not OpenRouter. Our keys are fine, so switching
+  // to the backup key would not help; these usually pass on a second try.
+  if (/Provider returned error/i.test(body) && status !== 402) return new AiError(text, status, "busy");
   if (status === 402 || (status === 403 && /limit|credit|quota/i.test(body))) return new AiError(text, status, "limit");
   if (status === 401 || status === 403) return new AiError(text, status, "auth");
   if (status === 404 || (status === 400 && /model/i.test(body))) return new AiError(text, status, "model");

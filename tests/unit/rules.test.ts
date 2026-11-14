@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildSrcdoc } from "../../src/lib/sandbox";
 import { eventBudgetLeft, remainingMs } from "../../src/lib/event";
+import { classify } from "../../src/lib/openrouter";
 import { usageView, type TeamRow } from "../../src/lib/store";
 import { cleanAvatar, cleanText, fmtClock, isRude, percentLeft } from "../../src/lib/text";
 import type { EventSettings } from "../../src/lib/types";
@@ -86,5 +87,15 @@ describe("app sandbox", () => {
     const doc = buildSrcdoc({ "index.html": "<p>just a paragraph</p>" });
     expect(doc.startsWith("<!doctype html>")).toBe(true);
     expect(doc).toContain("<body><p>just a paragraph</p></body>");
+  });
+});
+
+describe("AI errors", () => {
+  it("treats a refusal by the model's provider as a short hiccup, not as a bad key", () => {
+    const provider = '{"message":"Provider returned error","code":401,"metadata":{"raw":"Incorrect API key provided"}}';
+    expect(classify(401, provider).kind).toBe("busy");
+    expect(classify(401, '{"message":"No auth credentials found","code":401}').kind).toBe("auth");
+    expect(classify(402, '{"message":"Insufficient credits"}').kind).toBe("limit");
+    expect(classify(429, "").kind).toBe("busy");
   });
 });
