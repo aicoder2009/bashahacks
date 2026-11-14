@@ -167,7 +167,7 @@ export default function Home() {
             ))}
             <li className="card border-accent/50 bg-accent-soft p-4">
               <p className="font-medium">Prizes</p>
-              <p className="mt-1 text-sm text-muted">Gift cards for the top projects and test passes for the top five, thanks to our club sponsor.</p>
+              <p className="mt-1 text-sm text-muted">Gift cards for the top projects, thanks to our club sponsor.</p>
             </li>
           </ul>
         </Section>
