@@ -61,6 +61,7 @@ export default function BuildPage() {
   const [seenAnn, setSeenAnn] = useState(0);
   const [burst, setBurst] = useState(0);
   const [toast, setToast] = useState("");
+  const [edited, setEdited] = useState(false);
 
   const versionRef = useRef(-1);
   const lastMsg = useRef(0);
@@ -86,6 +87,12 @@ export default function BuildPage() {
   useEffect(() => {
     setSeenAnn(readNum("bh_ann_seen"));
   }, []);
+
+  // The guide's "change the code yourself" step is remembered in this browser, per team.
+  const teamId = sync?.team.id;
+  useEffect(() => {
+    if (teamId) setEdited(!!readNum(`bh_edited_${teamId}`));
+  }, [teamId]);
 
   const markSeen = useCallback((id: number) => {
     setSeenAnn((cur) => {
@@ -206,6 +213,10 @@ export default function BuildPage() {
       filesRef.current = next;
       dirtyRef.current = true;
       setFiles(next);
+      if (teamId) {
+        writeStr(`bh_edited_${teamId}`, "1");
+        setEdited(true);
+      }
       setHighlights((h) => ((h[name] || []).length ? { ...h, [name]: [] } : h));
       if (previewTimer.current) clearTimeout(previewTimer.current);
       previewTimer.current = setTimeout(() => {
@@ -215,7 +226,7 @@ export default function BuildPage() {
       if (saveTimer.current) clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(save, 900);
     },
-    [save]
+    [save, teamId]
   );
 
   const flush = useCallback(async () => {
@@ -339,6 +350,16 @@ export default function BuildPage() {
   const building = event.phase === "hacking";
   const busyOther = team.busy && !streaming ? (team.busy.memberId === me.id ? "The AI is still finishing your last request, and" : team.busy.name) : null;
   const canAct = building && !team.busy && !streaming;
+  const ms = team.milestones || {};
+  const guide = {
+    idea: !!ms.idea || !!streaming,
+    build: !!ms.build,
+    // Two AI answers that changed files means the first version got at least one change.
+    change: messages.filter((m) => m.role === "assistant" && (m.meta.files || []).length > 0).length > 1,
+    edit: edited,
+    publish: !!ms.publish,
+    submit: !!ms.submit,
+  };
   const unread = anns.filter((a) => a.id > seenAnn).length;
 
   return (
@@ -373,6 +394,7 @@ export default function BuildPage() {
             startsAt={event.startsAt}
             usage={team.usage}
             notice={notice}
+            guide={guide}
             onSend={send}
             draft={draft}
             setDraft={setDraft}

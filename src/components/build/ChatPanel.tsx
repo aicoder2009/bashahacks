@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
+import Guide, { type GuideProgress } from "./Guide";
 import { parseAiOutput } from "@/lib/parse-files";
 import { timeOfDay } from "@/lib/client";
 import type { ChatMessage, MemberView, Phase, UsageView } from "@/lib/types";
@@ -75,6 +76,7 @@ export default function ChatPanel({
   startsAt,
   usage,
   notice,
+  guide,
   onSend,
   draft,
   setDraft,
@@ -88,6 +90,7 @@ export default function ChatPanel({
   startsAt: number;
   usage: UsageView;
   notice: string;
+  guide: GuideProgress;
   onSend: (text: string) => void;
   draft: string;
   setDraft: (v: string) => void;
@@ -187,6 +190,7 @@ export default function ChatPanel({
                 ))}
               </div>
             )}
+            <Guide progress={guide} full />
           </div>
         ) : (
           <div className="space-y-4">
@@ -258,6 +262,7 @@ export default function ChatPanel({
       </div>
 
       <div className="border-t border-line px-3 pb-3 pt-2">
+        {!empty && (phase === "hacking" || phase === "lobby") && <Guide progress={guide} />}
         {suggestions.length > 0 && (
           <div className="mb-2 flex flex-wrap items-center gap-1.5">
             <span className="label mr-1">Try next</span>
