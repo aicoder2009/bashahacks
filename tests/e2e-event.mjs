@@ -265,9 +265,35 @@ step("results download");
 const csv = await admin.evaluate(async () => (await fetch("/api/admin/export")).text());
 if (!csv.includes("Shower Saver") || !csv.split("\n")[0].toLowerCase().includes("rank")) throw new Error("CSV looks wrong: " + csv.slice(0, 200));
 
+step("an officer puts one app on the TV for the room, then takes it off");
+const tvApp = () => tv.evaluate(async (k) => (await fetch(`/api/tv/app?key=${k}`)).status, tvKey);
+if ((await tvApp()) !== 404) throw new Error("the TV should have no app before an officer picks one");
+out = await act({ action: "present", teamId: "nope" });
+if (out.status !== 404) throw new Error("showing a team that does not exist should fail");
+out = await act({ action: "present", teamId: byTitle["Shower Saver"] });
+if (!out.ok) throw new Error("present failed: " + JSON.stringify(out));
+await tv.waitForSelector("text=Now showing", { timeout: 10000 });
+await tv.waitForSelector("iframe", { timeout: 10000 });
+if (!(await tv.locator("text=Shower Saver").count())) throw new Error("the app title is not on the TV");
+await tv.waitForTimeout(600);
+await tv.screenshot({ path: `${SHOTS}/44-tv-presenting.png` });
+// The app on the TV is live: whoever sits at the TV computer can click through it.
+const shown = tv.frameLocator("iframe");
+const before = Number(await shown.locator("#count").innerText());
+await shown.locator("#add").click();
+await shown.locator("#add").click();
+if (Number(await shown.locator("#count").innerText()) !== before + 2) throw new Error("clicks inside the app on the TV did nothing");
+await tv.waitForTimeout(5000);
+if (Number(await shown.locator("#count").innerText()) !== before + 2) throw new Error("the app on the TV reloaded by itself in the middle of a demo");
+out = await act({ action: "present", teamId: null });
+await tv.waitForSelector("text=/judging in progress/i", { timeout: 10000 });
+out = await act({ action: "present", teamId: byTitle["Lunch Rescue"] });
+await tv.waitForSelector("text=Now showing", { timeout: 10000 });
+
 step("winners reveal on the TV, one place at a time");
 out = await act({ action: "lockPodium" });
 if (!out.ok) throw new Error("lockPodium failed: " + JSON.stringify(out));
+if ((await tvApp()) !== 404) throw new Error("the app should leave the TV when results are locked");
 await tv.waitForSelector("text=/winners are/i", { timeout: 10000 });
 await tv.screenshot({ path: `${SHOTS}/43-tv-podium-0.png` });
 for (const n of [1, 2, 3]) {

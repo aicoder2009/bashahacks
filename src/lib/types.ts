@@ -39,6 +39,8 @@ export type EventSettings = {
   schedule: ScheduleItem[];
   podium: PodiumEntry[] | null;
   podiumStep: number;
+  /** The team whose app is on the TV during judging. */
+  presentingTeamId: string | null;
 };
 
 export type PublicEvent = {

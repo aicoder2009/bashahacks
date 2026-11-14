@@ -34,6 +34,7 @@ function defaults(): EventSettings {
     ],
     podium: null,
     podiumStep: 0,
+    presentingTeamId: null,
   };
 }
 

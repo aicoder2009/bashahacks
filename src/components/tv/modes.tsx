@@ -1,8 +1,12 @@
 "use client";
+import { useEffect, useState } from "react";
+import AppFrame from "@/components/AppFrame";
 import Podium from "@/components/Podium";
+import { api } from "@/lib/client";
 import { fmtClock } from "@/lib/text";
+import type { Files } from "@/lib/types";
 import { AnnouncementStrip, Counts, JoinBar, QrTile, Schedule, TeamCloud, plural, u } from "./parts";
-import type { ModeProps } from "./types";
+import type { ModeProps, TvData } from "./types";
 
 // Width of one monospace character, as a share of the font size.
 const MONO = 0.62;
@@ -165,6 +169,65 @@ export function JudgingMode({ data, now }: ModeProps) {
       </div>
       <div className="col-span-2">
         <TeamCloud teams={teams} base={0.72} maxHeight="26vh" />
+      </div>
+    </div>
+  );
+}
+
+type ShownApp = { teamId: string; files: Files };
+
+/** One team's app, full size, while the judges score it on their phones. */
+export function PresentingMode({ presenting, tvKey }: { presenting: NonNullable<TvData["presenting"]>; tvKey: string }) {
+  const [app, setApp] = useState<ShownApp | null>(null);
+  const teamId = presenting.teamId;
+
+  // The code is fetched once per team, not on every poll, so the app never reloads in the middle of a demo.
+  useEffect(() => {
+    let live = true;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    const go = () =>
+      api<ShownApp>(`/api/tv/app?key=${encodeURIComponent(tvKey)}`)
+        .then((next) => {
+          if (!live) return;
+          if (next.teamId === teamId) setApp(next);
+          else retry = setTimeout(go, 1500);
+        })
+        .catch(() => {
+          if (live) retry = setTimeout(go, 3000);
+        });
+    go();
+    return () => {
+      live = false;
+      clearTimeout(retry);
+    };
+  }, [teamId, tvKey]);
+
+  const files = app && app.teamId === teamId ? app.files : null;
+  const names = presenting.members.map((m) => m.name).join(", ");
+  return (
+    <div className="flex h-full flex-col" style={{ gap: u(1.2) }}>
+      <div className="flex shrink-0 items-baseline justify-between" style={{ gap: u(3) }}>
+        <div className="flex min-w-0 items-baseline" style={{ gap: u(1.4) }}>
+          <span className="mono shrink-0 font-semibold uppercase text-accent" style={{ fontSize: u(1.3), letterSpacing: "0.16em" }}>
+            Now showing
+          </span>
+          <h1 className="truncate font-bold" style={{ fontSize: u(3), lineHeight: 1.1 }}>
+            {presenting.appTitle}
+          </h1>
+        </div>
+        <div className="min-w-0 truncate text-muted" style={{ fontSize: u(1.8) }}>
+          <span className="font-semibold text-fg">{presenting.teamName}</span>
+          {names && names !== presenting.teamName ? `, ${names}` : ""}
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 overflow-hidden border border-line bg-white" style={{ borderRadius: u(1.2) }}>
+        {files ? (
+          <AppFrame key={teamId} files={files} storageKey={`bh_tv_${teamId}`} title={presenting.appTitle} />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-panel text-muted" style={{ fontSize: u(2.2) }}>
+            Loading the app
+          </div>
+        )}
       </div>
     </div>
   );

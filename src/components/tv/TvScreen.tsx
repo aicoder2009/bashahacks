@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { Confetti } from "@/components/ui";
 import { ApiError, api, chime, timeOfDay, useNow, usePoll } from "@/lib/client";
 import type { Phase } from "@/lib/types";
-import { DoneMode, HackingMode, JudgingMode, LobbyMode, WinnersMode } from "./modes";
+import { DoneMode, HackingMode, JudgingMode, LobbyMode, PresentingMode, WinnersMode } from "./modes";
 import { TvLogo, u } from "./parts";
 import type { TvAnnouncement, TvData } from "./types";
 
@@ -236,7 +236,11 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
         ) : phase === "hacking" ? (
           <HackingMode {...props} />
         ) : phase === "judging" ? (
-          <JudgingMode {...props} />
+          data.presenting ? (
+            <PresentingMode presenting={data.presenting} tvKey={tvKey} />
+          ) : (
+            <JudgingMode {...props} />
+          )
         ) : phase === "winners" ? (
           <WinnersMode {...props} />
         ) : (

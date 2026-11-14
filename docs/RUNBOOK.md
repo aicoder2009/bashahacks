@@ -39,7 +39,7 @@ The minute by minute plan with workshops, roles and the setup checklist is in `d
 | 9:30 to 12:30 | Building | Walk the room. Send announcements from the Announce tab. Watch the Teams tab for anyone running low on AI. |
 | 12:15 | Reminder | Announce: "15 minutes left. Press Publish, then Submit." |
 | 12:30 | Time is up | Building closes by itself. The TV switches to Judging. |
-| 12:30 to 1:30 | Judging and lunch | Judges walk the room and score on their phones at `/judges`. Watch progress in the Judging tab. |
+| 12:30 to 1:30 | Judging and lunch | Each team shows its app to the room. Judging tab, Leaderboard: press **Show on TV** next to the team, and **Stop showing** when they finish. Use the mouse on the TV computer to click through the app. Judges score on their own phones at `/judges`, and scores never appear on the TV. |
 | 1:30 | Winners | Judging tab: **Lock results and start the winners reveal**, then press Show 3rd place, Show 2nd place, Show 1st place, one at a time. |
 | 2:00 | Done | Set the phase to Done. |
 

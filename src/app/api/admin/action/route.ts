@@ -195,7 +195,7 @@ const actions: Record<string, (b: Body) => Promise<Result>> = {
     let patch: Partial<EventSettings>;
     if (s.phase === "judging") {
       // Reopen building for a short while.
-      patch = { phase: "hacking", endsAt: t + minutes * MINUTE, pausedRemainingMs: null };
+      patch = { phase: "hacking", endsAt: t + minutes * MINUTE, pausedRemainingMs: null, presentingTeamId: null };
     } else if (s.pausedRemainingMs != null) {
       patch = { pausedRemainingMs: Math.max(0, s.pausedRemainingMs) + minutes * MINUTE };
     } else if (s.phase === "hacking") {
@@ -480,10 +480,27 @@ const actions: Record<string, (b: Body) => Promise<Result>> = {
     await q("DELETE FROM judges WHERE id=$1", [id]);
   },
 
+  /** Puts one team's app on the TV during judging, or takes it off when no team is given. */
+  async present(b) {
+    const teamId = str(b.teamId);
+    if (!teamId) return { settings: await updateSettings({ presentingTeamId: null }) };
+    const s = await getSettings(true);
+    if (s.phase !== "judging") bad("The TV can show an app only during judging.");
+    const team = await q1<{ has_app: boolean }>(
+      `SELECT ((published_files IS NOT NULL AND jsonb_typeof(published_files) = 'object')
+               OR (jsonb_typeof(files->'index.html') = 'string' AND files->>'index.html' ~ '\\S')) AS has_app
+       FROM teams WHERE id=$1`,
+      [teamId]
+    );
+    if (!team) bad("That team does not exist anymore.", 404);
+    if (!team?.has_app) bad("That team has no app to show yet.");
+    return { settings: await updateSettings({ presentingTeamId: teamId }) };
+  },
+
   async lockPodium() {
     const podium = podiumFrom(await leaderboard());
     if (podium.length < 1) bad("No team has a score yet, so there is nothing to reveal.");
-    return { settings: await updateSettings({ podium, podiumStep: 0, phase: "winners", pausedRemainingMs: null }) };
+    return { settings: await updateSettings({ podium, podiumStep: 0, phase: "winners", pausedRemainingMs: null, presentingTeamId: null }) };
   },
 
   async podiumStep(b) {
@@ -509,7 +526,7 @@ const actions: Record<string, (b: Body) => Promise<Result>> = {
       await q(`DELETE FROM ${table}`);
     }
     forgetSpendCache();
-    return { settings: await updateSettings({ phase: "lobby", podium: null, podiumStep: 0, pausedRemainingMs: null }) };
+    return { settings: await updateSettings({ phase: "lobby", podium: null, podiumStep: 0, pausedRemainingMs: null, presentingTeamId: null }) };
   },
 };
 

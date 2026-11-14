@@ -26,7 +26,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 | Keys the platform makes | `bashahacks-team-xxxxxx` at $4 each, and one `bashahacks-test-xxxxxx` at $3 |
 | Model | `openai/gpt-5.6-luna` with thinking level High. Step up if its apps are poor: `anthropic/claude-sonnet-5.5` (about 6 to 10 cents per request, so $4 is only 40 to 65 requests). |
 | Students and money | Students never see dollars, only a usage bar. Dollars appear only in admin. |
-| Judging | Judges walk the room and score on phones. Top 3 on the podium. |
+| Judging | Teams show their apps to the room on the TV (an officer presses Show on TV in the Judging tab). Judges score privately on phones. Top 3 on the podium. |
 | Copy | No em dashes, no exclamation marks, plain friendly wording. |
 
 ## What is left, in order
@@ -42,7 +42,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 7. Event tab: start building. As a student: join, build a sustainability app from a prompt, ask for a change, undo, publish, open the public link, submit. As a second student: build a small game.
 8. Note the cost and wait time of each request (admin Teams tab shows dollars per team).
 9. Send an announcement and see it on the student screen and on the TV link (admin, Settings).
-10. Score both apps at `/judges` on a phone. Check the leaderboard, then run the podium from the Judging tab.
+10. Judging tab: press **Show on TV** next to one app and check it fills the TV, then **Stop showing**. Score both apps at `/judges` on a phone. Check the leaderboard, then run the podium from the Judging tab.
 11. Limits: set one team's AI amount just above what it has spent, confirm it gets blocked, top it up, confirm it works again. This also tests changing a key's limit at OpenRouter.
 12. Settings: **Wipe event data** (type WIPE). Event tab: phase Lobby, auto start on, start 9:30 AM and end 12:30 PM on Nov 14.
 

@@ -163,15 +163,19 @@ function Judges() {
 }
 
 function Leaderboard() {
-  const { state } = useAdmin();
+  const { state, act } = useAdmin();
+  const [busy, run] = useBusy();
   const board = state.leaderboard;
+  const judging = state.settings.phase === "judging";
+  const onTv = judging ? state.settings.presentingTeamId : null;
+  const present = (teamId: string | null, text: string) => run(() => act("present", { teamId }, { success: text }));
   // Only teams that at least one judge scored get a rank, in the same order the leaderboard already uses.
   const ranks = new Map(board.filter((r) => r.judgeCount > 0).map((r, i) => [r.teamId, i + 1]));
 
   return (
     <Section
       title="Leaderboard"
-      hint="Only officers can see this. Each score is the average across judges, out of 100."
+      hint="Only officers can see the scores. Each one is the average across judges, out of 100. During judging, press Show on TV to put a team's app on the big screen for the room."
       actions={
         <a className="btn btn-sm" href="/api/admin/export" download>
           Download results (CSV)
@@ -182,7 +186,7 @@ function Leaderboard() {
         <Empty>No teams yet.</Empty>
       ) : (
         <div className="-mx-4 overflow-x-auto px-4">
-          <table className="w-full min-w-[620px] border-collapse text-sm">
+          <table className="w-full min-w-[740px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-line text-left">
                 <th scope="col" className="label w-14 py-2 pr-3 font-normal">
@@ -197,8 +201,11 @@ function Leaderboard() {
                 <th scope="col" className="label py-2 pr-3 text-right font-normal">
                   Score
                 </th>
-                <th scope="col" className="label py-2 text-right font-normal">
+                <th scope="col" className="label py-2 pr-3 text-right font-normal">
                   Judges
+                </th>
+                <th scope="col" className="label py-2 text-right font-normal">
+                  TV
                 </th>
               </tr>
             </thead>
@@ -223,7 +230,23 @@ function Leaderboard() {
                       <span className="text-muted">not scored</span>
                     )}
                   </td>
-                  <td className="mono py-2 text-right">{r.judgeCount}</td>
+                  <td className="mono py-2 pr-3 text-right">{r.judgeCount}</td>
+                  <td className="py-2 text-right">
+                    {onTv === r.teamId ? (
+                      <button className="btn btn-primary btn-sm" disabled={busy} onClick={() => present(null, "The TV is back to the judging screen.")}>
+                        Stop showing
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-sm"
+                        disabled={busy || !judging}
+                        title={judging ? undefined : "Works during judging"}
+                        onClick={() => present(r.teamId, `${r.appTitle} is on the TV.`)}
+                      >
+                        Show on TV
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
