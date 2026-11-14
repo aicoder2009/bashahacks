@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appTitle, applyFiles, cleanFiles, hasApp, parseAiOutput } from "../../src/lib/parse-files";
+import { appTitle, applyFiles, cleanFiles, hasApp, mergeFiles, parseAiOutput } from "../../src/lib/parse-files";
 
 describe("parseAiOutput", () => {
   it("splits text, files, and suggestions", () => {
@@ -80,5 +80,27 @@ describe("file helpers", () => {
   it("rejects oversized saves and unknown file names", () => {
     expect(cleanFiles({ "index.html": "x".repeat(400_000) })).toBeNull();
     expect(cleanFiles({ "index.html": "ok", "evil.php": "no" })).toEqual({ "index.html": "ok" });
+  });
+});
+
+describe("mergeFiles", () => {
+  const base = { "index.html": "<h1>Hi</h1>", "style.css": "h1 { color: green; }", "script.js": "let n = 0;" };
+
+  it("keeps both edits when teammates changed different files", () => {
+    const mine = { ...base, "index.html": "<h1>Hi</h1><p>Ben</p>" };
+    const theirs = { ...base, "style.css": "h1 { color: blue; }" };
+    expect(mergeFiles(base, mine, theirs)).toEqual({ ...base, "index.html": mine["index.html"], "style.css": theirs["style.css"] });
+  });
+
+  it("gives up when both changed the same file in different ways", () => {
+    const mine = { ...base, "index.html": "<h1>Mine</h1>" };
+    const theirs = { ...base, "index.html": "<h1>Theirs</h1>" };
+    expect(mergeFiles(base, mine, theirs)).toBeNull();
+  });
+
+  it("accepts the same change made on both sides, and files that are missing", () => {
+    const same = { ...base, "script.js": "let n = 1;" };
+    expect(mergeFiles(base, same, same)).toEqual(same);
+    expect(mergeFiles({}, { "index.html": "<p>a</p>" }, { "style.css": "p {}" })).toEqual({ "index.html": "<p>a</p>", "style.css": "p {}" });
   });
 });

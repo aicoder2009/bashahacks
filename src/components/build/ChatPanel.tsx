@@ -71,7 +71,7 @@ export default function ChatPanel({
   members,
   meId,
   streaming,
-  busyName,
+  busyNote,
   phase,
   startsAt,
   usage,
@@ -85,7 +85,7 @@ export default function ChatPanel({
   members: MemberView[];
   meId: string;
   streaming: Streaming | null;
-  busyName: string | null;
+  busyNote: string | null;
   phase: Phase;
   startsAt: number;
   usage: UsageView;
@@ -103,7 +103,7 @@ export default function ChatPanel({
   useEffect(() => {
     const el = scroller.current;
     if (el && stick.current) el.scrollTop = el.scrollHeight;
-  }, [messages, streaming, busyName, notice]);
+  }, [messages, streaming, busyNote, notice]);
 
   useEffect(() => {
     const el = input.current;
@@ -115,7 +115,7 @@ export default function ChatPanel({
   const live = streaming ? parseAiOutput(streaming.raw) : null;
   const showPendingUser = streaming && !messages.some((m) => m.id === streaming.userMessageId);
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
-  const suggestions = !streaming && !busyName && phase === "hacking" && !usage.blocked ? lastAssistant?.meta.suggestions || [] : [];
+  const suggestions = !streaming && !busyNote && phase === "hacking" && !usage.blocked ? lastAssistant?.meta.suggestions || [] : [];
 
   let disabledReason = "";
   if (phase === "lobby") disabledReason = `Building opens at ${timeOfDay(startsAt)}. Think about your idea while you wait.`;
@@ -127,7 +127,7 @@ export default function ChatPanel({
         : usage.reason === "paused"
           ? "AI is paused for your team right now. Ask an officer."
           : "AI is paused for everyone for a moment. An officer will turn it back on.";
-  } else if (busyName) disabledReason = `${busyName} is asking the AI. You can send when it finishes.`;
+  } else if (busyNote) disabledReason = `${busyNote}. You can send when it finishes.`;
   const canType = !disabledReason && !streaming;
 
   const send = () => {
@@ -249,10 +249,10 @@ export default function ChatPanel({
               </div>
             ) : null}
 
-            {!streaming && busyName ? (
+            {!streaming && busyNote ? (
               <div className="flex items-center gap-2 px-1 text-sm text-muted" aria-live="polite">
                 <span className="pulse-dot" aria-hidden />
-                <span>{busyName} is asking the AI</span>
+                <span>{busyNote}</span>
               </div>
             ) : null}
 

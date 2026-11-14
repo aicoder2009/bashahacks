@@ -104,3 +104,20 @@ export function cleanFiles(input: unknown, maxTotal = 300_000): Files | null {
   }
   return total > maxTotal ? null : out;
 }
+
+/**
+ * Combines hand edits from two teammates who both started from `base`. Each file goes to whoever
+ * changed it. Returns null when both changed the same file in different ways.
+ */
+export function mergeFiles(base: Files, mine: Files, theirs: Files): Files | null {
+  const out: Files = { ...theirs };
+  for (const name of FILE_NAMES) {
+    const b = base[name] ?? "";
+    const m = mine[name] ?? "";
+    const t = theirs[name] ?? "";
+    if (m === b || m === t) continue;
+    if (t !== b) return null;
+    out[name] = m;
+  }
+  return out;
+}

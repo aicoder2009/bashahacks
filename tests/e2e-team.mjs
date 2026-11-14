@@ -93,6 +93,32 @@ await benApp.locator("#ben").waitFor({ timeout: 5000 });
 await ben.reload();
 await benApp.locator("#ben").waitFor({ timeout: 15000 });
 
+step("Ana and Ben type in different files at the same time and both edits are kept");
+await ana.click("role=tab[name='Code']");
+await ana.waitForSelector(".cm-content");
+await ben.click("role=tab[name='Code']");
+await ben.click("button:has-text('style.css')");
+await ben.waitForTimeout(3000); // everyone is on the newest version
+const typeSlowly = async (page, text) => {
+  await page.locator(".cm-content").click();
+  await page.keyboard.press("ControlOrMeta+End");
+  for (const ch of text) {
+    await page.keyboard.type(ch);
+    await page.waitForTimeout(80);
+  }
+};
+await Promise.all([
+  typeSlowly(ana, '\n<p id="ana2">Ana typed this at the same time</p>'),
+  typeSlowly(ben, "\n#ana2 { color: rgb(1, 2, 3); }"),
+]);
+// Cy only watches: the preview gets Ana's line in Ben's color.
+const cyLine = cy.frameLocator("iframe[title='Your app']").locator("#ana2");
+await cyLine.waitFor({ timeout: 20000 });
+for (let i = 0; (await cyLine.evaluate((el) => getComputedStyle(el).color)) !== "rgb(1, 2, 3)"; i++) {
+  if (i > 40) throw new Error("Ben's style change was lost while Ana was typing");
+  await cy.waitForTimeout(500);
+}
+
 step("Ben signs out and gets back in with the team code");
 await ben.click("[title='Your team and code']");
 ben.once("dialog", (d) => d.accept());

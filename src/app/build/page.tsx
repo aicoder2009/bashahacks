@@ -15,7 +15,7 @@ import {
 } from "@/components/build/Dialogs";
 import { Confetti, Logo } from "@/components/ui";
 import { api, ApiError, chime, useNow, usePoll } from "@/lib/client";
-import { parseAiOutput } from "@/lib/parse-files";
+import { mergeFiles, parseAiOutput } from "@/lib/parse-files";
 import type { Announcement, ChatMessage, Files, SyncResponse } from "@/lib/types";
 
 /** Line numbers in `next` that were not in `prev`, so the editor can mark what the AI changed. */
@@ -67,6 +67,7 @@ export default function BuildPage() {
   const lastMsg = useRef(0);
   const lastAnn = useRef(0);
   const filesRef = useRef<Files>({});
+  const baseRef = useRef<Files>({}); // the files as the server last had them
   const dirtyRef = useRef(false);
   const savingRef = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -104,6 +105,7 @@ export default function BuildPage() {
 
   const applyFiles = useCallback((next: Files, version: number) => {
     filesRef.current = next;
+    baseRef.current = next;
     versionRef.current = version;
     dirtyRef.current = false;
     setFiles(next);
@@ -139,6 +141,8 @@ export default function BuildPage() {
       if (fresh.length) {
         lastMsg.current = fresh[fresh.length - 1].id;
         setMessages((cur) => [...cur, ...fresh]);
+        // An answer arrived, so a note such as "a teammate is already asking" no longer applies.
+        if (fresh.some((m) => m.role === "assistant")) setNotice("");
       }
     }
 
@@ -190,17 +194,36 @@ export default function BuildPage() {
       return;
     }
     savingRef.current = true;
-    const snapshot = filesRef.current;
     try {
-      const out = await api<{ version: number }>("/api/project", { action: "save", files: snapshot, baseVersion: versionRef.current });
-      versionRef.current = out.version;
-      if (filesRef.current === snapshot) dirtyRef.current = false;
-      else saveTimer.current = setTimeout(save, 600);
-    } catch (e) {
-      // Someone else changed the app, or building closed: drop local typing and load the newest version.
-      dirtyRef.current = false;
-      versionRef.current = -1;
-      if (e instanceof ApiError) say(e.message);
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const snapshot = filesRef.current;
+        try {
+          const out = await api<{ version: number }>("/api/project", { action: "save", files: snapshot, baseVersion: versionRef.current });
+          versionRef.current = out.version;
+          baseRef.current = snapshot;
+          if (filesRef.current === snapshot) dirtyRef.current = false;
+          else saveTimer.current = setTimeout(save, 600);
+          return;
+        } catch (e) {
+          // A teammate saved first. If they changed a different file, keep both edits and save again.
+          const conflict = e instanceof ApiError && e.data.conflict ? e.data : null;
+          const theirs = conflict?.files as Files | undefined;
+          const merged = theirs ? mergeFiles(baseRef.current, filesRef.current, theirs) : null;
+          if (!theirs || !merged) {
+            // Same file changed twice, the AI is working, or building closed: drop local typing and load the newest version.
+            dirtyRef.current = false;
+            versionRef.current = -1;
+            if (e instanceof ApiError) say(e.message);
+            return;
+          }
+          baseRef.current = theirs;
+          versionRef.current = Number(conflict?.version);
+          filesRef.current = merged;
+          setFiles(merged);
+          setPreviewFiles(merged);
+        }
+      }
+      saveTimer.current = setTimeout(save, 600);
     } finally {
       savingRef.current = false;
     }
@@ -348,7 +371,7 @@ export default function BuildPage() {
 
   const { team, event, me } = sync;
   const building = event.phase === "hacking";
-  const busyOther = team.busy && !streaming ? (team.busy.memberId === me.id ? "The AI is still finishing your last request, and" : team.busy.name) : null;
+  const busyNote = team.busy && !streaming ? (team.busy.memberId === me.id ? "The AI is still working on your last request" : `${team.busy.name} is asking the AI`) : null;
   const canAct = building && !team.busy && !streaming;
   const ms = team.milestones || {};
   const guide = {
@@ -389,7 +412,7 @@ export default function BuildPage() {
             members={team.members}
             meId={me.id}
             streaming={streaming}
-            busyName={busyOther}
+            busyNote={busyNote}
             phase={event.phase}
             startsAt={event.startsAt}
             usage={team.usage}

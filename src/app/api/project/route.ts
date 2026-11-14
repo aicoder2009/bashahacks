@@ -65,14 +65,19 @@ export async function POST(req: Request) {
      WHERE id=$1 AND version=$3 AND busy_until < $5 RETURNING version`,
     [team.id, JSON.stringify(files), team.version, appTitle(files), t]
   );
-  if (!updated) return json({ error: "The app changed while saving. Loading the newest version.", conflict: true }, { status: 409 });
+  if (!updated) {
+    // Lost a race with a teammate's save. Send the newest files so the browser can combine both edits.
+    const fresh = await getTeam(team.id);
+    return json({ error: "The app changed while saving. Loading the newest version.", conflict: true, version: fresh?.version, files: fresh?.files }, { status: 409 });
+  }
 
-  // Hand edits arrive every second or so while typing; fold them into one history entry.
+  // Hand edits arrive every second or so while typing, from one student or from teammates taking
+  // turns; fold them into one history entry so they do not push the AI's versions out of History.
   const recent = kind === "manual"
     ? await q1<VersionRow>("SELECT * FROM versions WHERE team_id=$1 ORDER BY id DESC LIMIT 1", [team.id])
     : null;
-  if (recent && recent.kind === "manual" && recent.member_id === me.id && t - recent.created_at < 180_000) {
-    await q("UPDATE versions SET files=$2::jsonb, created_at=$3 WHERE id=$1", [recent.id, JSON.stringify(files), t]);
+  if (recent && recent.kind === "manual" && t - recent.created_at < 180_000) {
+    await q("UPDATE versions SET files=$2::jsonb, created_at=$3, member_id=$4 WHERE id=$1", [recent.id, JSON.stringify(files), t, me.id]);
   } else {
     await q("INSERT INTO versions (team_id, files, label, kind, member_id, created_at) VALUES ($1,$2::jsonb,$3,$4,$5,$6)", [
       team.id,

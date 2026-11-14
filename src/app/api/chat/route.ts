@@ -43,15 +43,22 @@ export async function POST(req: Request) {
     if (!mockMode()) await updateSettings({ model });
   }
 
-  let keyInfo = mockMode() ? { key: "mock", source: "team" as const } : await keyForTeam(team.id);
-  if (!keyInfo) return fail("The AI is not set up yet. Tell an officer.", 503);
-
   const t = Date.now();
   const locked = await q1<{ files: Files; version: number }>(
     "UPDATE teams SET busy_until=$2, busy_by=$3 WHERE id=$1 AND busy_until < $4 RETURNING files, version",
     [team.id, t + LOCK_MS, me.id, t]
   );
   if (!locked) return fail("A teammate is already asking the AI. Wait for it to finish.", 409);
+
+  // The key is picked only after the lock is held. Otherwise teammates who press Send at the same
+  // moment would each claim a different prepared key for the same team.
+  let keyInfo: Awaited<ReturnType<typeof keyForTeam>> = null;
+  try {
+    keyInfo = mockMode() ? { key: "mock", source: "team" } : await keyForTeam(team.id);
+  } finally {
+    if (!keyInfo) await q("UPDATE teams SET busy_until=0, busy_by=NULL WHERE id=$1", [team.id]).catch(() => {});
+  }
+  if (!keyInfo) return fail("The AI is not set up yet. Tell an officer.", 503);
 
   const historyRows = await q<{ id: number; role: "user" | "assistant"; member_id: string | null; content: string; meta: ChatMessage["meta"]; created_at: number }>(
     "SELECT * FROM (SELECT * FROM messages WHERE team_id=$1 ORDER BY id DESC LIMIT 8) x ORDER BY id",
