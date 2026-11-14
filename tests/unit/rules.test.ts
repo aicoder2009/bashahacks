@@ -117,8 +117,15 @@ describe("links to projects built somewhere else", () => {
     expect(cleanLink(undefined)).toBe("");
   });
 
+  it("keeps the address of a project that only runs on the student's laptop", () => {
+    expect(cleanLink("localhost:3000")).toBe("http://localhost:3000/");
+    expect(cleanLink("http://localhost:5173/app")).toBe("http://localhost:5173/app");
+    expect(cleanLink("LOCALHOST:8080")).toBe("http://localhost:8080/");
+    expect(cleanLink("127.0.0.1:5500/index.html")).toBe("http://127.0.0.1:5500/index.html");
+  });
+
   it("refuses anything that is not a plain web link", () => {
-    for (const bad of ["javascript:alert(1)", "data:text/html,<b>x</b>", "ftp://example.com/x", "not a link", "localhost", "https://user:pw@example.com", "https://example.com/" + "a".repeat(400)]) {
+    for (const bad of ["javascript:alert(1)", "data:text/html,<b>x</b>", "ftp://example.com/x", "not a link", "intranet", "localhost:alert(1)", "https://user:pw@localhost", "https://user:pw@example.com", "https://example.com/" + "a".repeat(400)]) {
       expect(cleanLink(bad), bad).toBeNull();
     }
   });

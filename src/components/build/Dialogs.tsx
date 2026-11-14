@@ -205,7 +205,7 @@ export function SubmitDialog({
             <p className="mt-1 text-sm text-muted">
               {built
                 ? "Leave this empty to submit the app you built here."
-                : "You have not built an app here, and that is fine. Paste a link judges can open to see what you made."}
+                : "You have not built an app here, and that is fine. Paste a link judges can open to see what you made. If it only runs on your laptop, paste its localhost address."}
             </p>
           </div>
           <ErrorNote>{error}</ErrorNote>

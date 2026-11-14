@@ -136,6 +136,13 @@ s = await state();
 const zoeTeam = s.teams.find((t) => t.members.some((m) => m.name === "Zoe W"));
 if (!zoeTeam.submitted || zoeTeam.publishedAt != null) throw new Error("a link-only project should be submitted but not published: " + JSON.stringify(zoeTeam));
 if (s.leaderboard.find((r) => r.teamId === zoeTeam.id)?.link !== "https://example.com/compost-map") throw new Error("the outside link is missing from the leaderboard");
+// A project that only runs on the student's own laptop is submitted with its localhost address.
+out = await call(zoe.page, "/api/submit", { ...writeUp, link: "localhost:3000" });
+if (out.status !== 200) throw new Error("a localhost link should be accepted, got " + out.status);
+s = await state();
+if (s.leaderboard.find((r) => r.teamId === zoeTeam.id)?.link !== "http://localhost:3000/") throw new Error("the localhost link is missing from the leaderboard");
+out = await call(zoe.page, "/api/submit", { ...writeUp, link: "example.com/compost-map" });
+if (out.status !== 200) throw new Error("changing the link back failed: " + out.text);
 
 await maya.page.goto(`${BASE}/build`);
 await maya.page.waitForSelector("text=Submitted ✓");

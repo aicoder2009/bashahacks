@@ -39,9 +39,11 @@ export function cleanLink(input: unknown, max = 300): string | null {
   if (!raw) return "";
   if (raw.length > max || /\s/.test(raw)) return null;
   try {
-    const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
+    // A project that only runs on the student's own laptop: "localhost:3000" is an address, not a scheme, and it is plain http.
+    const local = /^(localhost|127\.0\.0\.1)(:\d+)?([/?#]|$)/i.test(raw);
+    const u = new URL(local ? `http://${raw}` : /^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
     if (u.protocol !== "http:" && u.protocol !== "https:") return null;
-    if (u.username || u.password || !u.hostname.includes(".")) return null;
+    if (u.username || u.password || !(u.hostname.includes(".") || u.hostname === "localhost")) return null;
     return u.toString().length <= max ? u.toString() : null;
   } catch {
     return null;
