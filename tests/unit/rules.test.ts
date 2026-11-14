@@ -58,6 +58,14 @@ describe("text cleaning", () => {
     expect(isRude("Sh1t head".replace("1", "i"))).toBe(true);
     expect(isRude("Maya R")).toBe(false);
   });
+  it("lets real names and ordinary words through", () => {
+    for (const ok of ["Ana L", "Mariana L.", "Ishita P", "Harshit K", "Nazia M", "Yoshi T", "Grape Counter", "Cucumber Log", "Water Analyzer", "Sky Savers", "Peacock Park"]) {
+      expect(isRude(ok), ok).toBe(false);
+    }
+    for (const bad of ["Shit", "the FUCKERS", "anal", "Team Sex", "bullshitters", "kys"]) {
+      expect(isRude(bad), bad).toBe(true);
+    }
+  });
   it("keeps avatar parts in range", () => {
     expect(cleanAvatar({ s: 99, c: -1, e: 2, m: "3", a: null })).toEqual({ s: 0, c: 0, e: 2, m: 3, a: 0 });
   });

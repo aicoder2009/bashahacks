@@ -1,8 +1,12 @@
 import type { AvatarSpec } from "./types";
 
-const BLOCK = [
-  "fuck", "shit", "bitch", "cunt", "nigg", "fag", "dick", "cock", "pussy", "penis", "vagina", "slut", "whore",
-  "rape", "nazi", "hitler", "porn", "sex", "anal", "boob", "cum", "retard", "kys",
+// Rude anywhere inside a word.
+const BLOCK_INSIDE = ["fuck", "bitch", "cunt", "nigg", "pussy", "slut", "whore", "hitler", "faggot", "shithead", "bullshit", "dickhead"];
+// Rude only as a word on their own. Real names and everyday words contain these letters
+// (Ishita, Nazia, "Ana L", grape, cucumber, peacock, analyze), so they are not matched inside a word.
+const BLOCK_WHOLE = [
+  "shit", "shits", "shitty", "fag", "fags", "dick", "dicks", "cock", "cocks", "penis", "vagina", "rape", "rapist",
+  "nazi", "nazis", "porn", "porno", "sex", "sexy", "anal", "boob", "boobs", "cum", "retard", "retarded", "kys",
 ];
 
 export function cleanText(input: unknown, max: number): string {
@@ -22,8 +26,8 @@ export function cleanMultiline(input: unknown, max: number): string {
 }
 
 export function isRude(text: string): boolean {
-  const flat = text.toLowerCase().replace(/[^a-z]/g, "");
-  return BLOCK.some((w) => flat.includes(w));
+  const words = text.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  return words.some((w) => BLOCK_WHOLE.includes(w) || BLOCK_INSIDE.some((b) => w.includes(b)));
 }
 
 export const AVATAR_LIMITS = { s: 10, c: 8, e: 6, m: 6, a: 7 };
