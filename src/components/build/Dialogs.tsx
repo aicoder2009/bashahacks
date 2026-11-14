@@ -62,6 +62,7 @@ export function SubmitDialog({
   onClose,
   submission,
   appTitle,
+  built,
   canSubmit,
   onDone,
 }: {
@@ -69,6 +70,8 @@ export function SubmitDialog({
   onClose: () => void;
   submission: Submission | null;
   appTitle: string;
+  /** True when the team has an app built on this site. Without one, a link to an outside project is needed. */
+  built: boolean;
   canSubmit: boolean;
   onDone: () => void;
 }) {
@@ -76,6 +79,7 @@ export function SubmitDialog({
   const [problem, setProblem] = useState("");
   const [solution, setSolution] = useState("");
   const [category, setCategory] = useState("");
+  const [link, setLink] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -88,6 +92,7 @@ export function SubmitDialog({
     setProblem(submission?.problem || "");
     setSolution(submission?.solution || "");
     setCategory(submission?.category || "");
+    setLink(submission?.link || "");
     // Only when the dialog opens: do not wipe what the student is typing on every sync.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -96,7 +101,7 @@ export function SubmitDialog({
     setBusy(true);
     setError("");
     try {
-      await api("/api/submit", { title, problem, solution, category });
+      await api("/api/submit", { title, problem, solution, category, link });
       setSent(true);
       onDone();
     } catch (e) {
@@ -107,11 +112,15 @@ export function SubmitDialog({
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={sent ? "Submitted" : submission ? "Your submission" : "Submit your app"} wide>
+    <Modal open={open} onClose={onClose} title={sent ? "Submitted" : submission ? "Your submission" : "Submit your project"} wide>
       {sent ? (
         <div className="space-y-4 text-center">
-          <p className="text-lg">Nice work. Your app is in.</p>
-          <p className="text-muted">Judges will see the newest version. You can keep building and submit again until time runs out.</p>
+          <p className="text-lg">Nice work. Your {built ? "app" : "project"} is in.</p>
+          <p className="text-muted">
+            {built
+              ? "Judges will see the newest version. You can keep building and submit again until time runs out."
+              : "Judges will open your link. You can change it and submit again until time runs out."}
+          </p>
           <button className="btn btn-primary" onClick={onClose}>
             Back to building
           </button>
@@ -131,7 +140,7 @@ export function SubmitDialog({
           )}
           <div>
             <label htmlFor="s-title" className="mb-1 block font-medium">
-              App name
+              Project name
             </label>
             <input id="s-title" className="input" value={title} onChange={(e) => setTitle(e.target.value.slice(0, 60))} disabled={!canSubmit} />
           </div>
@@ -151,7 +160,7 @@ export function SubmitDialog({
           </div>
           <div>
             <label htmlFor="s-solution" className="mb-1 block font-medium">
-              How does your app help?
+              What is your project, and how does it help?
             </label>
             <textarea
               id="s-solution"
@@ -177,10 +186,34 @@ export function SubmitDialog({
               ))}
             </div>
           </fieldset>
+          <div>
+            <label htmlFor="s-link" className="mb-1 block font-medium">
+              Link to your project {built ? <span className="font-normal text-muted">(only if you built it somewhere else)</span> : null}
+            </label>
+            <input
+              id="s-link"
+              className="input"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              placeholder="https://"
+              value={link}
+              onChange={(e) => setLink(e.target.value.trim().slice(0, 300))}
+              disabled={!canSubmit}
+            />
+            <p className="mt-1 text-sm text-muted">
+              {built
+                ? "Leave this empty to submit the app you built here."
+                : "You have not built an app here, and that is fine. Paste a link judges can open to see what you made."}
+            </p>
+          </div>
           <ErrorNote>{error}</ErrorNote>
           {canSubmit ? (
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-muted">Submitting also publishes your newest version for the judges.</p>
+              <p className="text-sm text-muted">
+                {built ? "Submitting also publishes your newest version for the judges." : "Judges will open your link to see your project."}
+              </p>
               <button className="btn btn-primary" disabled={busy}>
                 {submission ? "Update submission" : "Submit"}
               </button>

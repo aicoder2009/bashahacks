@@ -13,7 +13,7 @@ const STEPS: { key: keyof GuideProgress; title: string; how: string }[] = [
   },
   { key: "edit", title: "Change the code yourself", how: "Open the Code tab, change a word or a color, and watch the preview update." },
   { key: "publish", title: "Publish", how: "Press Publish to get a link anyone can open." },
-  { key: "submit", title: "Submit", how: "Press Submit and tell the judges what problem your app solves." },
+  { key: "submit", title: "Submit", how: "Press Submit and tell the judges what problem your app solves. Built it somewhere else? Submit a link to it instead." },
 ];
 
 function Mark({ done, n }: { done: boolean; n: number }) {

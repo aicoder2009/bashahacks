@@ -21,7 +21,9 @@ type TeamLite = {
   category: string | null;
   problem: string | null;
   solution: string | null;
+  link: string | null;
   submitted: boolean;
+  has_app: boolean;
 };
 
 export async function GET(req: Request) {
@@ -40,9 +42,10 @@ export async function GET(req: Request) {
     ),
     q<TeamLite>(
       `SELECT t.id, t.name, t.slug, t.solo, t.app_title,
-              s.title AS sub_title, s.category, s.problem, s.solution, (s.team_id IS NOT NULL) AS submitted
+              s.title AS sub_title, s.category, s.problem, s.solution, s.link,
+              (s.team_id IS NOT NULL) AS submitted, ${HAS_APP} AS has_app
        FROM teams t LEFT JOIN submissions s ON s.team_id = t.id
-       WHERE ${HAS_APP}`
+       WHERE ${HAS_APP} OR COALESCE(s.link, '') <> ''`
     ),
     q<{ team_id: string; name: string; avatar: AvatarSpec }>(
       "SELECT team_id, name, avatar FROM members ORDER BY created_at"
@@ -81,6 +84,8 @@ export async function GET(req: Request) {
         category: t.category || "",
         problem: t.problem || "",
         solution: t.solution || "",
+        link: t.link || "",
+        hasApp: !!t.has_app,
         members: membersByTeam.get(t.id) || [],
         scores: mine,
         comment: noteByTeam.get(t.id) || "",

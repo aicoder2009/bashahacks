@@ -71,6 +71,8 @@ export type Submission = {
   problem: string;
   solution: string;
   category: string;
+  /** Web address of a project built outside this site, or "". */
+  link: string;
   submittedAt: number;
   updatedAt: number;
 };

@@ -31,7 +31,7 @@ export async function GET(req: Request) {
       "SELECT * FROM announcements WHERE id>$1 ORDER BY id LIMIT 50",
       [lastAnn]
     ),
-    q1<{ title: string; problem: string; solution: string; category: string; submitted_at: number; updated_at: number }>(
+    q1<{ title: string; problem: string; solution: string; category: string; link: string; submitted_at: number; updated_at: number }>(
       "SELECT * FROM submissions WHERE team_id=$1",
       [team.id]
     ),
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 
   const busyMember = team.busy_until > t && team.busy_by ? members.find((m) => m.id === team.busy_by) : null;
   const submission: Submission | null = sub
-    ? { title: sub.title, problem: sub.problem, solution: sub.solution, category: sub.category, submittedAt: sub.submitted_at, updatedAt: sub.updated_at }
+    ? { title: sub.title, problem: sub.problem, solution: sub.solution, category: sub.category, link: sub.link || "", submittedAt: sub.submitted_at, updatedAt: sub.updated_at }
     : null;
 
   const out: SyncResponse = {

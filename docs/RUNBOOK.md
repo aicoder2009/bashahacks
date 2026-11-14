@@ -40,7 +40,7 @@ The minute by minute plan with workshops, roles and the setup checklist is in `d
 | 12:00 | Lunch | Pizza and soda arrive. Students eat while they build. Announce it from the Announce tab. |
 | 12:45 | Reminder | Announce: "15 minutes left. Press Publish, then Submit." |
 | 1:00 | Time is up | Building closes by itself. The TV switches to Judging. |
-| 1:00 to 1:40 | Presentations and judging | Each team shows its app to the room. Judging tab, Leaderboard: press **Show on TV** next to the team, and **Stop showing** when they finish. Use the mouse on the TV computer to click through the app. Judges score on their own phones at `/judges`, and scores never appear on the TV. |
+| 1:00 to 1:40 | Presentations and judging | Each team shows its app to the room. Judging tab, Leaderboard: press **Show on TV** next to the team, and **Stop showing** when they finish. Use the mouse on the TV computer to click through the app. A team that built its project somewhere else (no AI, their own tools) submits a link instead: the TV shows the project name and link, and the leaderboard row has the link, so open it in a new tab on the TV computer or let the team plug in their own laptop. Judges score on their own phones at `/judges`, and scores never appear on the TV. |
 | 1:40 | Winners | Judging tab: **Lock results and start the winners reveal**, then press Show 3rd place, Show 2nd place, Show 1st place, one at a time. |
 | 2:00 | Done | Set the phase to Done. |
 

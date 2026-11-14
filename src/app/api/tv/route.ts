@@ -11,10 +11,11 @@ export async function GET(req: Request) {
   if (!key || !s.tvKey || !safeEqual(key, s.tvKey)) return fail("This screen link is not valid.", 401);
 
   const [teams, members, announcement] = await Promise.all([
-    q<{ id: string; name: string; solo: boolean; title: string | null; published: boolean; submitted: boolean }>(
+    q<{ id: string; name: string; solo: boolean; title: string | null; published: boolean; submitted: boolean; has_app: boolean; link: string | null }>(
       `SELECT t.id, t.name, t.solo, COALESCE(s.title, t.app_title) AS title,
               (t.published_files IS NOT NULL AND jsonb_typeof(t.published_files) = 'object') AS published,
-              (s.team_id IS NOT NULL) AS submitted
+              (s.team_id IS NOT NULL) AS submitted, s.link,
+              (COALESCE(length(btrim(COALESCE(t.published_files, t.files)->>'index.html')), 0) > 0) AS has_app
        FROM teams t LEFT JOIN submissions s ON s.team_id = t.id
        ORDER BY t.created_at, t.id`
     ),
@@ -56,7 +57,15 @@ export async function GET(req: Request) {
       : null,
     // The app on the big screen during judging. The code itself comes from /api/tv/app, once.
     presenting: shown
-      ? { teamId: shown.id, teamName: shown.name, appTitle: shown.title || "Untitled app", members: membersByTeam.get(shown.id) || [] }
+      ? {
+          teamId: shown.id,
+          teamName: shown.name,
+          appTitle: shown.title || "Untitled app",
+          members: membersByTeam.get(shown.id) || [],
+          // A project built somewhere else has no app to put in the frame, only its link.
+          hasApp: !!shown.has_app,
+          link: shown.link || "",
+        }
       : null,
     teams: teams.map((t) => ({
       id: t.id,

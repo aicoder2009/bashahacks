@@ -110,6 +110,33 @@ for (const [st, title] of [[maya, "Shower Saver"], [ana, "Lunch Rescue"]]) {
   out = await call(st.page, "/api/submit", { title, problem: "We noticed a lot of waste every single day.", solution: "Our app tracks it so people can cut back.", category: "school" });
   if (out.status !== 200) throw new Error("submit failed: " + out.text);
 }
+
+step("a student who built somewhere else submits a link, with no app here");
+const zoe = await student("Zoe W", "solo");
+const writeUp = { title: "Compost Map", problem: "Nobody knows where the compost bins are.", solution: "A map of every compost bin near school.", category: "community" };
+out = await call(zoe.page, "/api/submit", writeUp);
+if (out.status !== 400) throw new Error("submitting with no app and no link should fail, got " + out.status);
+for (const bad of ["javascript:alert(1)", "not a link", "ftp://example.com/x"]) {
+  out = await call(zoe.page, "/api/submit", { ...writeUp, link: bad });
+  if (out.status !== 400) throw new Error(`the link "${bad}" should be refused, got ${out.status}`);
+}
+await zoe.page.goto(`${BASE}/build`);
+await zoe.page.click("header >> button:has-text('Submit')");
+await zoe.page.fill("#s-title", writeUp.title);
+await zoe.page.fill("#s-problem", writeUp.problem);
+await zoe.page.fill("#s-solution", writeUp.solution);
+await zoe.page.click("text=In my community");
+await zoe.page.fill("#s-link", "example.com/compost-map");
+await zoe.page.screenshot({ path: `${SHOTS}/36-student-submit-link.png` });
+await zoe.page.click("form >> button:has-text('Submit')");
+await zoe.page.waitForSelector("text=Your project is in");
+await zoe.page.click("text=Back to building");
+await zoe.page.waitForSelector("text=Submitted ✓");
+s = await state();
+const zoeTeam = s.teams.find((t) => t.members.some((m) => m.name === "Zoe W"));
+if (!zoeTeam.submitted || zoeTeam.publishedAt != null) throw new Error("a link-only project should be submitted but not published: " + JSON.stringify(zoeTeam));
+if (s.leaderboard.find((r) => r.teamId === zoeTeam.id)?.link !== "https://example.com/compost-map") throw new Error("the outside link is missing from the leaderboard");
+
 await maya.page.goto(`${BASE}/build`);
 await maya.page.waitForSelector("text=Submitted ✓");
 await ben.page.goto(`${BASE}/build`);
@@ -216,7 +243,16 @@ js = await jcall("/api/judges/state");
 const tapped = js.teams.find((t) => t.teamId === byTitle["Shower Saver"]).scores;
 if (!Object.values(tapped).includes(5)) throw new Error("tapped score was not saved: " + JSON.stringify(tapped));
 
-const other = Object.keys(byTitle).find((k) => !["Shower Saver", "Lunch Rescue"].includes(k));
+step("judge: a project built somewhere else is listed, with a link instead of an app");
+const outside = js.teams.find((t) => t.appTitle === "Compost Map");
+if (!outside || !outside.submitted || outside.hasApp || outside.link !== "https://example.com/compost-map") throw new Error("the outside project is wrong on the judges list: " + JSON.stringify(outside));
+await judge.click("text=All projects");
+await judge.click("text=Compost Map");
+await judge.waitForSelector("a[href='https://example.com/compost-map'][target='_blank']:has-text('Open their project')");
+if (await judge.locator("iframe").count()) throw new Error("an outside project must never be loaded inside the judges page");
+await judge.screenshot({ path: `${SHOTS}/54-judge-outside-project.png`, fullPage: true });
+
+const other = Object.keys(byTitle).find((k) => !["Shower Saver", "Lunch Rescue", "Compost Map"].includes(k));
 const plan = { "Shower Saver": 5, "Lunch Rescue": 4, [other]: 2 };
 for (const [title, value] of Object.entries(plan)) {
   for (const c of crit) {
@@ -264,6 +300,7 @@ if (s.leaderboard[0].appTitle !== "Shower Saver") throw new Error("tie should go
 step("results download");
 const csv = await admin.evaluate(async () => (await fetch("/api/admin/export")).text());
 if (!csv.includes("Shower Saver") || !csv.split("\n")[0].toLowerCase().includes("rank")) throw new Error("CSV looks wrong: " + csv.slice(0, 200));
+if (!csv.includes("https://example.com/compost-map")) throw new Error("the outside project link is missing from the CSV");
 
 step("an officer puts one app on the TV for the room, then takes it off");
 const tvApp = () => tv.evaluate(async (k) => (await fetch(`/api/tv/app?key=${k}`)).status, tvKey);
@@ -287,8 +324,14 @@ await tv.waitForTimeout(5000);
 if (Number(await shown.locator("#count").innerText()) !== before + 2) throw new Error("the app on the TV reloaded by itself in the middle of a demo");
 out = await act({ action: "present", teamId: null });
 await tv.waitForSelector("text=/judging in progress/i", { timeout: 10000 });
+out = await act({ action: "present", teamId: byTitle["Compost Map"] });
+if (!out.ok) throw new Error("showing an outside project on the TV failed: " + JSON.stringify(out));
+await tv.waitForSelector("text=built outside Basha Hacks", { timeout: 10000 });
+if (await tv.locator("iframe").count()) throw new Error("an outside project must never be loaded inside the TV page");
+await tv.screenshot({ path: `${SHOTS}/45-tv-outside-project.png` });
 out = await act({ action: "present", teamId: byTitle["Lunch Rescue"] });
 await tv.waitForSelector("text=Now showing", { timeout: 10000 });
+await tv.waitForSelector("iframe", { timeout: 10000 });
 
 step("winners reveal on the TV, one place at a time");
 out = await act({ action: "lockPodium" });

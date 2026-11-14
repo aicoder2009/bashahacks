@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   const subByTeam = new Map(subs.map((s) => [s.team_id, s]));
 
   const lines = [
-    csvRow(["rank", "team", "members", "app title", "score", "judges count", "submitted", "category", "problem", "solution", "published link"]),
+    csvRow(["rank", "team", "members", "app title", "score", "judges count", "submitted", "category", "problem", "solution", "published link", "outside project link"]),
   ];
   let rank = 0;
   for (const row of board) {
@@ -37,6 +37,7 @@ export async function GET(req: Request) {
         sub?.problem || "",
         sub?.solution || "",
         `/p/${row.slug}`,
+        row.link,
       ])
     );
   }

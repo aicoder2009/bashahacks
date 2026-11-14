@@ -12,6 +12,10 @@ export type JudgeTeam = {
   category: string;
   problem: string;
   solution: string;
+  /** Web address of a project built outside this site, or "". */
+  link: string;
+  /** False when the team only submitted a link and built nothing here. */
+  hasApp: boolean;
   members: { name: string; avatar: AvatarSpec }[];
   scores: Record<number, number>;
   comment: string;

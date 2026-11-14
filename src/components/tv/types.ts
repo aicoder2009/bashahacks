@@ -25,7 +25,7 @@ export type TvData = {
     podiumStep: number;
   };
   announcement: TvAnnouncement | null;
-  presenting: { teamId: string; teamName: string; appTitle: string; members: { name: string; avatar: AvatarSpec }[] } | null;
+  presenting: { teamId: string; teamName: string; appTitle: string; members: { name: string; avatar: AvatarSpec }[]; hasApp: boolean; link: string } | null;
   teams: TvTeam[];
   counts: { students: number; teams: number; published: number; submitted: number };
 };

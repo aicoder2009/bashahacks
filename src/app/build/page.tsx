@@ -15,7 +15,7 @@ import {
 } from "@/components/build/Dialogs";
 import { Confetti, Logo } from "@/components/ui";
 import { api, ApiError, chime, useNow, usePoll } from "@/lib/client";
-import { mergeFiles, parseAiOutput } from "@/lib/parse-files";
+import { hasApp, mergeFiles, parseAiOutput } from "@/lib/parse-files";
 import type { Announcement, ChatMessage, Files, SyncResponse } from "@/lib/types";
 
 /** Line numbers in `next` that were not in `prev`, so the editor can mark what the AI changed. */
@@ -401,7 +401,7 @@ export default function BuildPage() {
 
       {event.phase !== "hacking" && event.phase !== "lobby" && (
         <div className="border-b border-line bg-panel px-4 py-2 text-center text-sm">
-          Time is up. {sync.submission ? "Your app is submitted, and judges will come around to see it." : "Judges will come around to see what you built."}
+          Time is up. {sync.submission ? "Your project is submitted, and judges will come around to see it." : "Judges will come around to see what you built."}
         </div>
       )}
 
@@ -452,6 +452,7 @@ export default function BuildPage() {
         onClose={() => setDialog("")}
         submission={sync.submission}
         appTitle={team.appTitle || ""}
+        built={hasApp(files)}
         canSubmit={building}
         onDone={doSync}
       />

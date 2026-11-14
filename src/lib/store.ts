@@ -59,6 +59,8 @@ export type LeaderRow = {
   score: number;
   judgeCount: number;
   submitted: boolean;
+  /** Web address of a project built outside this site, or "". */
+  link: string;
   members: { name: string; avatar: AvatarSpec }[];
 };
 
@@ -76,8 +78,8 @@ export async function leaderboard(): Promise<LeaderRow[]> {
     if (!byTeam.has(r.team_id)) byTeam.set(r.team_id, []);
     byTeam.get(r.team_id)!.push(r.avg);
   }
-  const teams = await q<TeamRow & { sub_title: string | null }>(
-    "SELECT t.*, s.title AS sub_title FROM teams t LEFT JOIN submissions s ON s.team_id = t.id"
+  const teams = await q<TeamRow & { sub_title: string | null; sub_link: string | null }>(
+    "SELECT t.*, s.title AS sub_title, s.link AS sub_link FROM teams t LEFT JOIN submissions s ON s.team_id = t.id"
   );
   const members = await q<MemberRow>("SELECT * FROM members ORDER BY created_at");
   const rows: LeaderRow[] = [];
@@ -92,6 +94,7 @@ export async function leaderboard(): Promise<LeaderRow[]> {
       score: Math.round(mean * 20 * 10) / 10,
       judgeCount: scores.length,
       submitted: t.sub_title != null,
+      link: t.sub_link || "",
       members: members.filter((m) => m.team_id === t.id).map((m) => ({ name: m.name, avatar: m.avatar })),
     });
   }

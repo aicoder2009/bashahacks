@@ -113,6 +113,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   submitted_at double precision NOT NULL,
   updated_at double precision NOT NULL
 );
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS link text NOT NULL DEFAULT '';
 CREATE TABLE IF NOT EXISTS criteria (
   id serial PRIMARY KEY,
   name text NOT NULL,

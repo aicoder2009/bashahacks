@@ -3,7 +3,7 @@ import { buildSrcdoc } from "../../src/lib/sandbox";
 import { eventBudgetLeft, remainingMs } from "../../src/lib/event";
 import { classify } from "../../src/lib/openrouter";
 import { usageView, type TeamRow } from "../../src/lib/store";
-import { cleanAvatar, cleanText, fmtClock, isRude, percentLeft } from "../../src/lib/text";
+import { cleanAvatar, cleanLink, cleanText, fmtClock, isRude, percentLeft } from "../../src/lib/text";
 import type { EventSettings } from "../../src/lib/types";
 
 const settings = { totalBudgetUsd: 50, aiPausedAll: false } as EventSettings;
@@ -105,5 +105,21 @@ describe("AI errors", () => {
     expect(classify(401, '{"message":"No auth credentials found","code":401}').kind).toBe("auth");
     expect(classify(402, '{"message":"Insufficient credits"}').kind).toBe("limit");
     expect(classify(429, "").kind).toBe("busy");
+  });
+});
+
+describe("links to projects built somewhere else", () => {
+  it("keeps normal web links and adds https when it is missing", () => {
+    expect(cleanLink("https://replit.com/@maya/shower-saver")).toBe("https://replit.com/@maya/shower-saver");
+    expect(cleanLink("  github.com/maya/app  ")).toBe("https://github.com/maya/app");
+    expect(cleanLink("http://example.com")).toBe("http://example.com/");
+    expect(cleanLink("")).toBe("");
+    expect(cleanLink(undefined)).toBe("");
+  });
+
+  it("refuses anything that is not a plain web link", () => {
+    for (const bad of ["javascript:alert(1)", "data:text/html,<b>x</b>", "ftp://example.com/x", "not a link", "localhost", "https://user:pw@example.com", "https://example.com/" + "a".repeat(400)]) {
+      expect(cleanLink(bad), bad).toBeNull();
+    }
   });
 });

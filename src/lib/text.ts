@@ -30,7 +30,25 @@ export function isRude(text: string): boolean {
   return words.some((w) => BLOCK_WHOLE.includes(w) || BLOCK_INSIDE.some((b) => w.includes(b)));
 }
 
-export const AVATAR_LIMITS = { s: 10, c: 8, e: 6, m: 6, a: 7 };
+/**
+ * A web link a student typed, as a full http(s) address. Returns "" for an empty box and null for
+ * anything that is not a normal web link, so a link can never run code when a judge clicks it.
+ */
+export function cleanLink(input: unknown, max = 300): string | null {
+  const raw = String(input ?? "").trim();
+  if (!raw) return "";
+  if (raw.length > max || /\s/.test(raw)) return null;
+  try {
+    const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    if (u.username || u.password || !u.hostname.includes(".")) return null;
+    return u.toString().length <= max ? u.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+export const AVATAR_LIMITS= { s: 10, c: 8, e: 6, m: 6, a: 7 };
 
 export function cleanAvatar(input: unknown): AvatarSpec {
   const src = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;

@@ -175,7 +175,7 @@ function Leaderboard() {
   return (
     <Section
       title="Leaderboard"
-      hint="Only officers can see the scores. Each one is the average across judges, out of 100. During judging, press Show on TV to put a team's app on the big screen for the room."
+      hint="Only officers can see the scores. Each one is the average across judges, out of 100. During judging, press Show on TV to put a team's app on the big screen for the room. A project built somewhere else shows as a link here. Open it yourself or have the team show it."
       actions={
         <a className="btn btn-sm" href="/api/admin/export" download>
           Download results (CSV)
@@ -220,6 +220,11 @@ function Leaderboard() {
                   <td className="py-2 pr-3">
                     <span>{r.appTitle}</span>
                     {r.submitted ? null : <span className="pill ml-2">Not submitted</span>}
+                    {r.link ? (
+                      <a className="block max-w-[18rem] truncate text-xs text-accent underline underline-offset-2" href={r.link} target="_blank" rel="noopener noreferrer" title={r.link}>
+                        Outside project: {r.link}
+                      </a>
+                    ) : null}
                   </td>
                   <td className="mono py-2 pr-3 text-right">
                     {r.judgeCount > 0 ? (

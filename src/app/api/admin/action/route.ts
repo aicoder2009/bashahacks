@@ -486,9 +486,11 @@ const actions: Record<string, (b: Body) => Promise<Result>> = {
     if (!teamId) return { settings: await updateSettings({ presentingTeamId: null }) };
     const s = await getSettings(true);
     if (s.phase !== "judging") bad("The TV can show an app only during judging.");
+    // A project built somewhere else counts too: the TV shows its name and link while the team presents it.
     const team = await q1<{ has_app: boolean }>(
       `SELECT ((published_files IS NOT NULL AND jsonb_typeof(published_files) = 'object')
-               OR (jsonb_typeof(files->'index.html') = 'string' AND files->>'index.html' ~ '\\S')) AS has_app
+               OR (jsonb_typeof(files->'index.html') = 'string' AND files->>'index.html' ~ '\\S')
+               OR EXISTS (SELECT 1 FROM submissions s WHERE s.team_id = teams.id AND s.link <> '')) AS has_app
        FROM teams WHERE id=$1`,
       [teamId]
     );

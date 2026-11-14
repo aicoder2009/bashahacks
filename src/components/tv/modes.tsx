@@ -180,9 +180,11 @@ type ShownApp = { teamId: string; files: Files };
 export function PresentingMode({ presenting, tvKey }: { presenting: NonNullable<TvData["presenting"]>; tvKey: string }) {
   const [app, setApp] = useState<ShownApp | null>(null);
   const teamId = presenting.teamId;
+  const hasApp = presenting.hasApp;
 
   // The code is fetched once per team, not on every poll, so the app never reloads in the middle of a demo.
   useEffect(() => {
+    if (!hasApp) return;
     let live = true;
     let retry: ReturnType<typeof setTimeout> | undefined;
     const go = () =>
@@ -200,7 +202,7 @@ export function PresentingMode({ presenting, tvKey }: { presenting: NonNullable<
       live = false;
       clearTimeout(retry);
     };
-  }, [teamId, tvKey]);
+  }, [teamId, tvKey, hasApp]);
 
   const files = app && app.teamId === teamId ? app.files : null;
   const names = presenting.members.map((m) => m.name).join(", ");
@@ -221,7 +223,22 @@ export function PresentingMode({ presenting, tvKey }: { presenting: NonNullable<
         </div>
       </div>
       <div className="min-h-0 flex-1 overflow-hidden border border-line bg-white" style={{ borderRadius: u(1.2) }}>
-        {files ? (
+        {!hasApp ? (
+          // Built somewhere else: an outside site is never loaded into this page, so the team shows it themselves.
+          <div className="flex h-full flex-col items-center justify-center bg-panel text-center" style={{ gap: u(1.6), padding: u(4) }}>
+            <p className="font-semibold" style={{ fontSize: u(3) }}>
+              This project was built outside Basha Hacks
+            </p>
+            <p className="text-muted" style={{ fontSize: u(2) }}>
+              The team will show it to you themselves.
+            </p>
+            {presenting.link ? (
+              <p className="mono max-w-full text-accent [overflow-wrap:anywhere]" style={{ fontSize: u(1.8) }}>
+                {presenting.link}
+              </p>
+            ) : null}
+          </div>
+        ) : files ? (
           <AppFrame key={teamId} files={files} storageKey={`bh_tv_${teamId}`} title={presenting.appTitle} />
         ) : (
           <div className="flex h-full items-center justify-center bg-panel text-muted" style={{ fontSize: u(2.2) }}>

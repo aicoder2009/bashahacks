@@ -98,6 +98,16 @@ function AppPanel({ teamId, title }: { teamId: string; title: string }) {
   );
 }
 
+/** A link to a project built somewhere else. It always opens in a new tab and is never loaded inside this page. */
+function OutsideLink({ link, className, showAddress = false }: { link: string; className: string; showAddress?: boolean }) {
+  if (!link) return null;
+  return (
+    <a className={className} href={link} target="_blank" rel="noopener noreferrer">
+      {showAddress ? link : "Open their project"}
+    </a>
+  );
+}
+
 function SaveBadge({ state }: { state: SaveState }) {
   return (
     <span role="status" aria-live="polite" className="mono flex min-w-16 items-center justify-end gap-1.5 text-sm">
@@ -237,9 +247,18 @@ export default function ScoreView({
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
         {/* On a phone the rubric comes first and the app opens on request. On a laptop the app stays in view on the left. */}
-        <div className="order-2 lg:sticky lg:top-4 lg:order-1 lg:h-[calc(100dvh-2rem)] lg:min-h-[480px]">
-          <AppPanel teamId={teamId} title={team.appTitle} />
-        </div>
+        {team.hasApp ? (
+          <div className="order-2 lg:sticky lg:top-4 lg:order-1 lg:h-[calc(100dvh-2rem)] lg:min-h-[480px]">
+            <AppPanel teamId={teamId} title={team.appTitle} />
+          </div>
+        ) : (
+          <section aria-label="The project" className="card order-2 p-6 text-center lg:order-1">
+            <h2 className="label">The project</h2>
+            <p className="mt-2 font-medium">This team built their project outside Basha Hacks.</p>
+            <p className="mt-1 text-sm text-muted">Open their link to try it, or ask them to show it to you.</p>
+            <OutsideLink link={team.link} className="btn btn-primary mt-4" />
+          </section>
+        )}
 
         <div className="order-1 flex min-w-0 flex-col gap-4 lg:order-2">
           <section aria-label="Write-up" className="card order-2 p-4 lg:order-1">
@@ -250,9 +269,15 @@ export default function ScoreView({
                   <p className="mt-1 whitespace-pre-wrap [overflow-wrap:anywhere]">{team.problem}</p>
                 </div>
                 <div>
-                  <h2 className="label">How the app helps</h2>
+                  <h2 className="label">What it is and how it helps</h2>
                   <p className="mt-1 whitespace-pre-wrap [overflow-wrap:anywhere]">{team.solution}</p>
                 </div>
+                {team.hasApp && team.link ? (
+                  <div>
+                    <h2 className="label">Also built outside Basha Hacks</h2>
+                    <OutsideLink link={team.link} className="mt-1 inline-block text-accent underline underline-offset-2 [overflow-wrap:anywhere]" showAddress />
+                  </div>
+                ) : null}
               </div>
             ) : (
               <>
