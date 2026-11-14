@@ -14,7 +14,7 @@ async function student(name) {
   const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
   const page = await ctx.newPage();
   page.on("pageerror", (e) => errors.push(`${name} pageerror: ${e.message}`));
-  await page.goto(BASE);
+  await page.goto(BASE + "/join");
   await page.waitForLoadState("networkidle");
   await page.fill("#code", eventCode);
   await page.click("text=Next");
@@ -97,7 +97,7 @@ step("Ben signs out and gets back in with the team code");
 await ben.click("[title='Your team and code']");
 ben.once("dialog", (d) => d.accept());
 await ben.click("text=Sign out on this computer");
-await ben.waitForURL(BASE + "/");
+await ben.waitForURL(BASE + "/join");
 await ben.click("text=Already joined?");
 await ben.fill("#rcode", code);
 await ben.click("button:has-text('Find my team')");

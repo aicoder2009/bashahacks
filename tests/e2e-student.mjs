@@ -20,7 +20,7 @@ page.on("console", (m) => {
 
 const step = (s) => console.log("•", s);
 
-await page.goto(BASE);
+await page.goto(BASE + "/join");
 await page.waitForLoadState("networkidle");
 await page.screenshot({ path: `${SHOTS}/01-join-code.png` });
 step("wrong event code is rejected");

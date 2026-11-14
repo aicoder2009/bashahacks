@@ -1,421 +1,216 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Avatar, { SHAPE_NAMES } from "@/components/Avatar";
-import { ErrorNote, Logo, ThemeToggle } from "@/components/ui";
-import { api, ApiError } from "@/lib/client";
-import { AVATAR_LIMITS, avatarFromSeed } from "@/lib/text";
+import Link from "next/link";
+import Avatar from "@/components/Avatar";
+import { Logo, ThemeToggle } from "@/components/ui";
 import type { AvatarSpec } from "@/lib/types";
 
-type Step = "code" | "name" | "avatar" | "mode" | "create" | "join" | "created" | "rejoin" | "rejoinPick";
-type PublicInfo = { name: string; phase: string; teamsAllowed: boolean; maxTeamSize: number; teamName: string };
-
-const rand = (n: number) => Math.floor(Math.random() * n);
-const randomAvatar = (): AvatarSpec => ({
-  s: rand(AVATAR_LIMITS.s),
-  c: rand(AVATAR_LIMITS.c),
-  e: rand(AVATAR_LIMITS.e),
-  m: rand(AVATAR_LIMITS.m),
-  a: rand(AVATAR_LIMITS.a),
-});
-
-const STICKERS: { spec: AvatarSpec; cls: string }[] = [
-  { spec: { s: 0, c: 0, e: 2, m: 1, a: 0 }, cls: "left-[6%] top-[14%] -rotate-12" },
-  { spec: { s: 1, c: 2, e: 1, m: 0, a: 0 }, cls: "right-[8%] top-[18%] rotate-12" },
-  { spec: { s: 2, c: 3, e: 0, m: 1, a: 5 }, cls: "left-[10%] bottom-[12%] rotate-6" },
-  { spec: { s: 4, c: 3, e: 4, m: 5, a: 0 }, cls: "right-[7%] bottom-[16%] -rotate-6" },
-  { spec: { s: 3, c: 0, e: 5, m: 0, a: 3 }, cls: "left-[24%] top-[6%] rotate-3" },
-  { spec: { s: 5, c: 1, e: 1, m: 4, a: 0 }, cls: "right-[24%] bottom-[5%] -rotate-3" },
+const FACTS: [string, string][] = [
+  ["When", "Saturday, November 14, 2026"],
+  ["Time", "9:00 AM to 2:00 PM"],
+  ["Where", "Room K105, Basha High School"],
+  ["Theme", "Environment and sustainability"],
 ];
 
-export default function JoinPage() {
-  const router = useRouter();
-  const [info, setInfo] = useState<PublicInfo | null>(null);
-  const [step, setStep] = useState<Step>("code");
-  const [eventCode, setEventCode] = useState("");
-  const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState<AvatarSpec>({ s: 0, c: 0, e: 0, m: 0, a: 0 });
-  const [teamName, setTeamName] = useState("");
-  const [teamCode, setTeamCode] = useState("");
-  const [created, setCreated] = useState<{ name: string; code: string } | null>(null);
-  const [rejoin, setRejoin] = useState<{ teamName: string; members: { id: string; name: string; avatar: AvatarSpec }[] } | null>(null);
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+const STEPS: [string, string][] = [
+  ["Notice a problem", "Wasted food, long showers, litter at school. Pick something you have seen at home, at school, or in your community."],
+  ["Describe your app", "Tell the AI who it is for and what it should do. It writes the code while you watch."],
+  ["Test and improve", "Click everything. Ask for changes one at a time, or change the code yourself."],
+  ["Publish and present", "Press Publish to get a link anyone can open, then show your app to the room."],
+];
 
-  useEffect(() => {
-    // Already joined on this computer? Go straight to the build screen.
-    api("/api/sync?v=-1")
-      .then(() => router.replace("/build"))
-      .catch(() => {});
-    api<PublicInfo>("/api/public")
-      .then((d) => {
-        setInfo(d);
-        setTeamName(d.teamName);
-      })
-      .catch(() => {});
-  }, [router]);
+const SCHEDULE: [string, string, string][] = [
+  ["9:00", "Check in", "Sign in, find a seat, pick your character."],
+  ["9:10", "Welcome", "The theme, the rules, and how judging works."],
+  ["9:20", "Workshop: Brief the AI", "How to tell an AI exactly what to build, starting from a real problem."],
+  ["9:30", "Building starts", "Short workshops along the way on working with AI properly: one change at a time, testing, debugging, and reading the code."],
+  ["12:30", "Building ends, lunch", "Pizza and soda."],
+  ["12:45", "Presentations", "Each team shows its app on the big screen. Two minutes each."],
+  ["1:30", "Winners", "Third, second, first."],
+  ["2:00", "Done", ""],
+];
 
-  const run = async (fn: () => Promise<void>) => {
-    setError("");
-    setBusy(true);
-    try {
-      await fn();
-    } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Something went wrong. Try again.");
-    } finally {
-      setBusy(false);
-    }
-  };
+const CRITERIA: [string, string][] = [
+  ["Sustainability impact", "Does it tackle a real environmental problem, and would it help?"],
+  ["Creativity", "Is the idea or the approach original?"],
+  ["Does it work", "Can you actually use the app, start to finish?"],
+  ["Design and ease of use", "Is it clear, good looking, and easy to figure out?"],
+  ["Presentation", "Did the team explain the problem and their app well?"],
+];
 
-  const checkCode = () =>
-    run(async () => {
-      await api("/api/join", { step: "check", eventCode });
-      setStep("name");
-    });
+const FAQ: [string, string][] = [
+  ["Do I need to know how to code?", "No. You describe your app in plain words and the AI writes the code. You will learn how to guide it, fix what breaks, and read a little of the code along the way."],
+  ["Can I work with friends?", "Yes. Build solo or in a team of up to 3. You can start solo and invite a teammate later."],
+  ["What do I need to bring?", "Your media and liability release forms, signed by a parent. You need them to get a seat. Computers are set up in the room."],
+  ["Is there food?", "Yes. Pizza and soda at lunch."],
+  ["What can I build?", "Anything that helps the planet. A food waste tracker, a shower timer, a swap board, a cleanup log. There are starter ideas on the build screen if you are stuck."],
+  ["What happens to my app afterward?", "When you press Publish, your app gets its own link. You can share it with family and friends."],
+];
 
-  const join = (mode: "solo" | "create" | "join") =>
-    run(async () => {
-      const out = await api<{ team: { name: string; code: string; solo: boolean } }>("/api/join", {
-        eventCode,
-        name,
-        avatar,
-        mode,
-        teamName,
-        teamCode,
-      });
-      if (mode === "create") {
-        setCreated({ name: out.team.name, code: out.team.code });
-        setStep("created");
-      } else router.push("/build");
-    });
+const STICKERS: { spec: AvatarSpec; cls: string }[] = [
+  { spec: { s: 0, c: 0, e: 2, m: 1, a: 0 }, cls: "left-[5%] top-[18%] -rotate-12" },
+  { spec: { s: 1, c: 2, e: 1, m: 0, a: 0 }, cls: "right-[6%] top-[14%] rotate-12" },
+  { spec: { s: 2, c: 3, e: 0, m: 1, a: 5 }, cls: "left-[11%] bottom-[10%] rotate-6" },
+  { spec: { s: 4, c: 3, e: 4, m: 5, a: 0 }, cls: "right-[10%] bottom-[14%] -rotate-6" },
+];
 
-  const lookupRejoin = () =>
-    run(async () => {
-      const out = await api<{ teamName: string; members: { id: string; name: string; avatar: AvatarSpec }[] }>(
-        `/api/rejoin?code=${encodeURIComponent(teamCode)}`
-      );
-      setRejoin(out);
-      setStep("rejoinPick");
-    });
-
-  const doRejoin = (memberId: string) =>
-    run(async () => {
-      await api("/api/rejoin", { code: teamCode, memberId });
-      router.push("/build");
-    });
-
-  const cycle = (k: keyof AvatarSpec, dir: number) =>
-    setAvatar((a) => ({ ...a, [k]: (a[k] + dir + AVATAR_LIMITS[k]) % AVATAR_LIMITS[k] }));
-
-  const back = (to: Step) => {
-    setError("");
-    setStep(to);
-  };
-
+function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <main className="relative flex min-h-screen flex-col overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute inset-0 hidden opacity-70 md:block">
-        {STICKERS.map((s, i) => (
-          <div key={i} className={`absolute ${s.cls}`}>
-            <Avatar spec={s.spec} size={84} />
-          </div>
-        ))}
-      </div>
+    <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-20 border-t border-line py-14">
+      <h2 id={`${id}-h`} className="mb-6 text-2xl font-semibold tracking-tight">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
 
-      <header className="relative z-10 flex items-center justify-between px-5 py-4">
-        <Logo />
-        <ThemeToggle />
+export default function Home() {
+  return (
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-20 border-b border-line bg-bg/90 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center gap-4 px-5 py-3">
+          <Logo />
+          <nav aria-label="Sections" className="ml-auto hidden items-center gap-5 text-sm text-muted md:flex">
+            <a className="hover:text-fg" href="#about">About</a>
+            <a className="hover:text-fg" href="#schedule">Schedule</a>
+            <a className="hover:text-fg" href="#judging">Judging</a>
+            <a className="hover:text-fg" href="#faq">FAQ</a>
+          </nav>
+          <div className="ml-auto flex items-center gap-2 md:ml-0">
+            <ThemeToggle />
+            <Link className="btn btn-primary btn-sm" href="/join">
+              Check in
+            </Link>
+          </div>
+        </div>
       </header>
 
-      <div className="relative z-10 flex flex-1 items-center justify-center px-4 pb-10">
-        <div className="w-full max-w-md">
-          <div className="mb-6 text-center">
-            <p className="label mb-2">Basha High School DevOps Club</p>
-            <h1 className="text-3xl font-semibold tracking-tight">{info?.name || "DevOps Basha Hacks"}</h1>
-            <p className="mt-2 text-muted">Build an app that helps the planet. No coding experience needed.</p>
+      <main className="mx-auto max-w-5xl px-5">
+        <section className="relative py-20 text-center md:py-28">
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden opacity-70 lg:block">
+            {STICKERS.map((s, i) => (
+              <div key={i} className={`absolute ${s.cls}`}>
+                <Avatar spec={s.spec} size={84} />
+              </div>
+            ))}
           </div>
-
-          <div className="card p-6">
-            {step === "code" && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  checkCode();
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label htmlFor="code" className="mb-1.5 block font-medium">
-                    Enter the event code
-                  </label>
-                  <p className="mb-3 text-sm text-muted">It is on the big screen at the front of the room.</p>
-                  <input
-                    id="code"
-                    className="input mono !h-14 text-center text-2xl uppercase tracking-[0.3em]"
-                    value={eventCode}
-                    onChange={(e) => setEventCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10))}
-                    autoFocus
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </div>
-                <ErrorNote>{error}</ErrorNote>
-                <button className="btn btn-primary btn-lg w-full" disabled={busy || eventCode.length < 3}>
-                  Next
-                </button>
-                <button type="button" className="w-full text-center text-sm text-muted underline underline-offset-4" onClick={() => back("rejoin")}>
-                  Already joined? Get back in with your team code
-                </button>
-              </form>
-            )}
-
-            {step === "name" && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (name.trim().length < 2) return setError("Please type your first name and last initial.");
-                  setError("");
-                  setAvatar(avatarFromSeed(name.trim().toLowerCase() + Date.now()));
-                  setStep("avatar");
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label htmlFor="name" className="mb-1.5 block font-medium">
-                    What is your name?
-                  </label>
-                  <p className="mb-3 text-sm text-muted">First name and last initial, like Maya R.</p>
-                  <input id="name" className="input !h-12 text-lg" value={name} onChange={(e) => setName(e.target.value.slice(0, 24))} autoFocus autoComplete="off" />
-                </div>
-                <ErrorNote>{error}</ErrorNote>
-                <div className="flex gap-3">
-                  <button type="button" className="btn btn-lg" onClick={() => back("code")}>
-                    Back
-                  </button>
-                  <button className="btn btn-primary btn-lg flex-1">Next</button>
-                </div>
-              </form>
-            )}
-
-            {step === "avatar" && (
-              <div className="space-y-4">
-                <div className="text-center">
-                  <p className="font-medium">Pick your character</p>
-                  <p className="text-sm text-muted">This is how you show up on the big screen.</p>
-                </div>
-                <div className="flex justify-center py-1">
-                  <div key={JSON.stringify(avatar)} className="pop-in">
-                    <Avatar spec={avatar} size={132} title={`${name}'s character`} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {(
-                    [
-                      ["s", "Character", SHAPE_NAMES[avatar.s]],
-                      ["c", "Color", `${avatar.c + 1} of ${AVATAR_LIMITS.c}`],
-                      ["e", "Eyes", `${avatar.e + 1} of ${AVATAR_LIMITS.e}`],
-                      ["m", "Mouth", `${avatar.m + 1} of ${AVATAR_LIMITS.m}`],
-                      ["a", "Extra", avatar.a === 0 ? "None" : `${avatar.a} of ${AVATAR_LIMITS.a - 1}`],
-                    ] as [keyof AvatarSpec, string, string][]
-                  ).map(([k, label, value]) => (
-                    <div key={k} className="flex items-center gap-2">
-                      <span className="label w-24">{label}</span>
-                      <button className="btn btn-sm !px-2.5" onClick={() => cycle(k, -1)} aria-label={`Previous ${label.toLowerCase()}`}>
-                        ‹
-                      </button>
-                      <span className="mono flex-1 text-center text-sm">{value}</span>
-                      <button className="btn btn-sm !px-2.5" onClick={() => cycle(k, 1)} aria-label={`Next ${label.toLowerCase()}`}>
-                        ›
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-3">
-                  <button className="btn btn-lg" onClick={() => back("name")}>
-                    Back
-                  </button>
-                  <button className="btn btn-lg" onClick={() => setAvatar(randomAvatar())}>
-                    Shuffle
-                  </button>
-                  <button className="btn btn-primary btn-lg flex-1" onClick={() => back("mode")}>
-                    Looks good
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === "mode" && (
-              <div className="space-y-3">
-                <p className="text-center font-medium">How do you want to build, {name.split(" ")[0]}?</p>
-                <button className="card flex w-full items-center gap-4 p-4 text-left hover:bg-panel2" onClick={() => join("solo")} disabled={busy}>
-                  <Avatar spec={avatar} size={44} />
-                  <span>
-                    <span className="block font-semibold">Go solo</span>
-                    <span className="block text-sm text-muted">Build your own app. You can invite a teammate later.</span>
-                  </span>
-                </button>
-                {info?.teamsAllowed !== false && (
-                  <>
-                    <button className="card flex w-full items-center gap-4 p-4 text-left hover:bg-panel2" onClick={() => back("create")} disabled={busy}>
-                      <span className="mono flex h-11 w-11 items-center justify-center rounded-lg bg-accent-soft text-xl text-accent">+</span>
-                      <span>
-                        <span className="block font-semibold">Create a team</span>
-                        <span className="block text-sm text-muted">Start a team and get a code to share. Up to {info?.maxTeamSize || 3} people.</span>
-                      </span>
-                    </button>
-                    <button className="card flex w-full items-center gap-4 p-4 text-left hover:bg-panel2" onClick={() => back("join")} disabled={busy}>
-                      <span className="mono flex h-11 w-11 items-center justify-center rounded-lg bg-accent-soft text-lg text-accent">#</span>
-                      <span>
-                        <span className="block font-semibold">Join a team</span>
-                        <span className="block text-sm text-muted">Your teammate already made one and has a code.</span>
-                      </span>
-                    </button>
-                  </>
-                )}
-                <ErrorNote>{error}</ErrorNote>
-                <button className="btn w-full" onClick={() => back("avatar")}>
-                  Back
-                </button>
-              </div>
-            )}
-
-            {step === "create" && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  join("create");
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label htmlFor="tname" className="mb-1.5 block font-medium">
-                    Name your team
-                  </label>
-                  <p className="mb-3 text-sm text-muted">We picked one for you. Change it if you like.</p>
-                  <input id="tname" className="input !h-12 text-lg" value={teamName} onChange={(e) => setTeamName(e.target.value.slice(0, 28))} autoFocus autoComplete="off" />
-                </div>
-                <ErrorNote>{error}</ErrorNote>
-                <div className="flex gap-3">
-                  <button type="button" className="btn btn-lg" onClick={() => back("mode")}>
-                    Back
-                  </button>
-                  <button className="btn btn-primary btn-lg flex-1" disabled={busy}>
-                    Create team
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {step === "join" && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  join("join");
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label htmlFor="tcode" className="mb-1.5 block font-medium">
-                    Enter your team code
-                  </label>
-                  <p className="mb-3 text-sm text-muted">Four letters. Your teammate can see it at the top of their screen.</p>
-                  <input
-                    id="tcode"
-                    className="input mono !h-14 text-center text-2xl uppercase tracking-[0.4em]"
-                    value={teamCode}
-                    onChange={(e) => setTeamCode(e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4))}
-                    autoFocus
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </div>
-                <ErrorNote>{error}</ErrorNote>
-                <div className="flex gap-3">
-                  <button type="button" className="btn btn-lg" onClick={() => back("mode")}>
-                    Back
-                  </button>
-                  <button className="btn btn-primary btn-lg flex-1" disabled={busy || teamCode.length < 4}>
-                    Join team
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {step === "created" && created && (
-              <div className="space-y-4 text-center">
-                <p className="font-medium">Team {created.name} is ready</p>
-                <p className="text-sm text-muted">Tell your teammates this code so they can join you.</p>
-                <p className="mono pop-in rounded-xl border border-line bg-bg py-5 text-5xl font-semibold tracking-[0.35em] text-accent">{created.code}</p>
-                <p className="text-sm text-muted">You can always find it at the top of your build screen.</p>
-                <button className="btn btn-primary btn-lg w-full" onClick={() => router.push("/build")}>
-                  Start building
-                </button>
-              </div>
-            )}
-
-            {step === "rejoin" && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  lookupRejoin();
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label htmlFor="rcode" className="mb-1.5 block font-medium">
-                    Enter your team code
-                  </label>
-                  <p className="mb-3 text-sm text-muted">Solo builders have one too. If you lost it, ask an officer.</p>
-                  <input
-                    id="rcode"
-                    className="input mono !h-14 text-center text-2xl uppercase tracking-[0.4em]"
-                    value={teamCode}
-                    onChange={(e) => setTeamCode(e.target.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4))}
-                    autoFocus
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </div>
-                <ErrorNote>{error}</ErrorNote>
-                <div className="flex gap-3">
-                  <button type="button" className="btn btn-lg" onClick={() => back("code")}>
-                    Back
-                  </button>
-                  <button className="btn btn-primary btn-lg flex-1" disabled={busy || teamCode.length < 4}>
-                    Find my team
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {step === "rejoinPick" && rejoin && (
-              <div className="space-y-3">
-                <p className="text-center font-medium">Who are you on {rejoin.teamName}?</p>
-                {rejoin.members.map((m) => (
-                  <button key={m.id} className="card flex w-full items-center gap-3 p-3 text-left hover:bg-panel2" onClick={() => doRejoin(m.id)} disabled={busy}>
-                    <Avatar spec={m.avatar} size={40} />
-                    <span className="font-medium">{m.name}</span>
-                  </button>
-                ))}
-                <ErrorNote>{error}</ErrorNote>
-                <button className="btn w-full" onClick={() => back("rejoin")}>
-                  Back
-                </button>
-              </div>
-            )}
+          <div className="relative">
+            <p className="label mb-3">Basha High School DevOps Club</p>
+            <h1 className="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
+              DevOps Basha <span className="text-accent">Hacks</span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
+              Build an app that helps the planet, in one morning. No coding experience needed.
+            </p>
+            <p className="mono mt-5 text-sm">Sat, Nov 14 · 9:00 AM to 2:00 PM · Room K105</p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link className="btn btn-primary btn-lg" href="/join">
+                Sign in and check in
+              </Link>
+              <a className="btn btn-lg" href="#schedule">
+                See the schedule
+              </a>
+            </div>
+            <p className="mt-3 text-sm text-muted">Check in opens at 9:00. The event code is on the big screen in the room.</p>
           </div>
+        </section>
 
-          <p className="mt-5 text-center text-sm text-muted">
-            <a className="underline underline-offset-4" href="/judges">
-              Judges
-            </a>
-            <span className="mx-2">·</span>
-            <a className="underline underline-offset-4" href="/admin">
-              Officers
-            </a>
+        <dl className="grid grid-cols-2 gap-3 pb-14 md:grid-cols-4">
+          {FACTS.map(([k, v]) => (
+            <div key={k} className="card p-4">
+              <dt className="label mb-1">{k}</dt>
+              <dd className="font-medium">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <Section id="about" title="What is Basha Hacks?">
+          <p className="max-w-2xl text-muted">
+            A beginner hackathon run by the DevOps Club. You pick an environmental problem you have noticed, describe an app that helps, and an AI builds it with you. You see the chat, the code, and a live preview side by side. By the end of the morning you have a real app with its own link.
           </p>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map(([title, text], i) => (
+              <li key={title} className="card p-4">
+                <span className="mono mb-3 flex h-7 w-7 items-center justify-center rounded-full bg-accent-soft text-sm text-accent" aria-hidden>
+                  {i + 1}
+                </span>
+                <p className="font-medium">{title}</p>
+                <p className="mt-1 text-sm text-muted">{text}</p>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        <Section id="schedule" title="Schedule">
+          <ol className="card divide-y divide-line">
+            {SCHEDULE.map(([time, title, note]) => (
+              <li key={time} className="flex gap-4 px-4 py-3">
+                <span className="mono w-14 shrink-0 font-semibold tabular-nums text-accent">{time}</span>
+                <span>
+                  <span className="font-medium">{title}</span>
+                  {note && <span className="block text-sm text-muted">{note}</span>}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        <Section id="judging" title="Judging and prizes">
+          <p className="max-w-2xl text-muted">
+            Each team shows its app to the room. Judges score five things, and the top three teams take the podium.
+          </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {CRITERIA.map(([name, hint]) => (
+              <li key={name} className="card p-4">
+                <p className="font-medium">{name}</p>
+                <p className="mt-1 text-sm text-muted">{hint}</p>
+              </li>
+            ))}
+            <li className="card border-accent/50 bg-accent-soft p-4">
+              <p className="font-medium">Prizes</p>
+              <p className="mt-1 text-sm text-muted">Gift cards for the top projects and test passes for the top five, thanks to our club sponsor.</p>
+            </li>
+          </ul>
+        </Section>
+
+        <Section id="faq" title="Questions">
+          <div className="card divide-y divide-line">
+            {FAQ.map(([q, a]) => (
+              <details key={q} className="group px-4 py-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+                  {q}
+                  <span className="mono text-muted group-open:rotate-45" aria-hidden>
+                    +
+                  </span>
+                </summary>
+                <p className="mt-2 max-w-2xl text-sm text-muted">{a}</p>
+              </details>
+            ))}
+          </div>
+        </Section>
+
+        <section className="border-t border-line py-14 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">Here for the event?</h2>
+          <p className="mt-2 text-muted">Sign in with the event code and start building.</p>
+          <Link className="btn btn-primary btn-lg mt-6" href="/join">
+            Sign in and check in
+          </Link>
+        </section>
+      </main>
+
+      <footer className="border-t border-line">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-6 text-sm text-muted">
+          <span>DevOps Club, Basha High School</span>
+          <span>
+            <Link className="underline underline-offset-4" href="/judges">
+              Judges
+            </Link>
+            <span className="mx-2">·</span>
+            <Link className="underline underline-offset-4" href="/admin">
+              Officers
+            </Link>
+          </span>
         </div>
-      </div>
-    </main>
+      </footer>
+    </div>
   );
 }

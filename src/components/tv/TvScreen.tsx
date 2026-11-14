@@ -202,7 +202,8 @@ export default function TvScreen({ tvKey }: { tvKey: string }) {
   if (!data) return <Message title="Getting the big screen ready" />;
 
   const phase = data.event.phase;
-  const props = { data, now, host, origin };
+  // Students join at /join. The home page is the event website.
+  const props = { data, now, host: host && `${host}/join`, origin: origin && `${origin}/join` };
   // If an officer deletes the announcement, the takeover goes away with it.
   const showTakeover = takeover && data.announcement?.id === takeover.id ? takeover : null;
   const stale = lastOk > 0 && now - offset - lastOk > 9000;

@@ -63,6 +63,8 @@ Target: under $1 spent.
 
 ## Things worth knowing about the code
 
+- `/` is the event website (static, no database). Students join at `/join`, which the home page's Check in button, the TV and its QR code all point to. `/students` redirects there.
+- `docs/day-of-schedule.html` is the minute by minute plan for officers: workshops, roles, setup checklist. Open it in a browser.
 - `src/lib/db.ts` creates all tables on first use. There are no migrations. To change the schema, add `ALTER TABLE ... IF NOT EXISTS` statements to the `SCHEMA` string.
 - Live updates are plain polling of `/api/sync` every 2.5 seconds. No WebSockets, on purpose: school networks often block them.
 - Student apps run in a sandboxed iframe with no same-origin access (`src/lib/sandbox.ts`). Do not add `allow-same-origin`.

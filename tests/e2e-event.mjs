@@ -62,7 +62,7 @@ async function student(name, mode, extra = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1366, height: 768 } });
   const page = await ctx.newPage();
   watch(page, name);
-  await page.goto(BASE);
+  await page.goto(BASE + "/join");
   const res = await page.evaluate(
     async (b) => {
       const r = await fetch("/api/join", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) });

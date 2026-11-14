@@ -266,7 +266,7 @@ export function TeamDialog({
     await api("/api/logout", { role: "student" }).catch(() => {});
     // A full page load on purpose, so nothing from this student's session stays in memory.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.href = "/";
+    window.location.href = "/join";
   };
   return (
     <Modal open={open} onClose={onClose} title={team.solo ? "Building solo" : `Team ${team.name}`}>

@@ -116,7 +116,7 @@ export default function BuildPage() {
     try {
       resp = await api<SyncResponse>(`/api/sync?v=${versionRef.current}&m=${lastMsg.current}&a=${lastAnn.current}`);
     } catch (e) {
-      if (e instanceof ApiError && e.status === 401) router.replace("/");
+      if (e instanceof ApiError && e.status === 401) router.replace("/join");
       return;
     }
     setOffset(resp.now - Date.now());

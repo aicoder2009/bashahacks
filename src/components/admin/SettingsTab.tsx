@@ -108,7 +108,7 @@ function Links() {
         <a className="btn btn-sm" href="/judges" target="_blank" rel="noreferrer">
           Open the judges page
         </a>
-        <a className="btn btn-sm" href="/" target="_blank" rel="noreferrer">
+        <a className="btn btn-sm" href="/join" target="_blank" rel="noreferrer">
           Open the student page
         </a>
       </div>

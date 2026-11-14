@@ -2,11 +2,13 @@
 
 DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 
+The minute by minute plan with workshops, roles and the setup checklist is in `docs/day-of-schedule.html`.
+
 ## The four links
 
 | What | Link | Who needs what |
 | --- | --- | --- |
-| Students | the site address, for example `bashahacks.vercel.app` | The event code (shown on the TV) |
+| Students | the site address, for example `bashahacks.vercel.app`, then **Check in** (or add `/join`) | The event code (shown on the TV) |
 | Judges | add `/judges` | The judge passcode (Admin, Settings) |
 | Officers | add `/admin` | The admin passcode |
 | TV | Admin, Settings, "TV link" | Open it on the computer plugged into the TV |
@@ -32,7 +34,7 @@ DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 | Time | What happens | What you do |
 | --- | --- | --- |
 | 8:40 | Setup | Open the TV link on the TV computer, press F11 for full screen, click once to turn on sound. Confirm it shows the Lobby with the event code. |
-| 9:00 | Welcome | Students go to the site, type the event code, pick a name and a character. Watch them pop up on the TV. |
+| 9:00 | Welcome | Students go to the site, press **Check in**, type the event code, pick a name and a character. Watch them pop up on the TV. |
 | 9:30 | Building starts | It starts by itself. If you are running late, turn Auto start off before 9:30 and press **Start building now** when ready. |
 | 9:30 to 12:30 | Building | Walk the room. Send announcements from the Announce tab. Watch the Teams tab for anyone running low on AI. |
 | 12:15 | Reminder | Announce: "15 minutes left. Press Publish, then Submit." |
@@ -44,7 +46,7 @@ DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 ## Common situations
 
 **A student closed the tab or switched computers.**
-On the first page, press "Already joined? Get back in with your team code". Their code is in the Teams tab if they forgot it.
+On the Check in page, press "Already joined? Get back in with your team code". Their code is in the Teams tab if they forgot it.
 
 **A student is out of AI ("used all of its AI").**
 Teams tab, find the team, **Add AI**. The box shows the most you can give without going over the event budget. Check the AI tab first to see how much budget is left.

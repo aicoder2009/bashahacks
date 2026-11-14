@@ -19,7 +19,7 @@ Local development needs a Postgres database in `DATABASE_URL`. Tables create the
 
 ## Layout
 
-- `src/app/` pages: `/` join, `/build` student workspace, `/p/[slug]` published apps, `/judges`, `/admin`, `/tv`
+- `src/app/` pages: `/` event website, `/join` check in, `/build` student workspace, `/p/[slug]` published apps, `/judges`, `/admin`, `/tv`
 - `src/app/api/` route handlers. Admin actions all go through `api/admin/action`
 - `src/lib/` server logic: `db.ts`, `auth.ts`, `event.ts` (phases, timer, budget), `openrouter.ts` (keys, limits, streaming), `sandbox.ts`, `parse-files.ts`
 - `src/components/` UI, grouped by surface (`build/`, `admin/`, `judges/`, `tv/`)
