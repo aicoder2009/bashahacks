@@ -144,7 +144,7 @@ export default function WorkArea({
                 </button>
               ))}
               <span className="ml-auto hidden truncate pl-3 text-[0.8rem] text-muted md:block">
-                {liveFiles ? "The AI is writing this right now" : changed ? `${changed} lines changed by the AI are marked in green` : FILE_HELP[file]}
+                {liveFiles ? "The AI is writing this right now" : changed ? `${changed} lines changed by the AI are marked in green` : readOnly ? FILE_HELP[file] : `${FILE_HELP[file]} Edit it here and the preview updates.`}
               </span>
             </div>
             <div className="min-h-0 flex-1 overflow-hidden">

@@ -84,6 +84,15 @@ await ben.keyboard.press("Control+End");
 await ben.keyboard.type("\n<p id=\"ben\">Edited by Ben</p>");
 await ana.frameLocator("iframe[title='Your app']").locator("#ben").waitFor({ timeout: 20000 });
 
+step("Ben's own preview shows the edit, after Restart and after a page reload too");
+await ben.click("role=tab[name='Preview']");
+const benApp = ben.frameLocator("iframe[title='Your app']");
+await benApp.locator("#ben").waitFor({ timeout: 5000 });
+await ben.click("text=Restart");
+await benApp.locator("#ben").waitFor({ timeout: 5000 });
+await ben.reload();
+await benApp.locator("#ben").waitFor({ timeout: 15000 });
+
 step("Ben signs out and gets back in with the team code");
 await ben.click("[title='Your team and code']");
 ben.once("dialog", (d) => d.accept());
