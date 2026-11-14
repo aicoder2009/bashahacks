@@ -22,7 +22,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 | Event | Saturday Nov 14, 2026, room K105. Welcome 9:00, building 9:30 to 12:30, judging and lunch, winners 1:30, done 2:00. Arizona time. |
 | Size | About 10 to 15 students expected. Solo or teams of up to 3. |
 | AI budget | $50 total, hard maximum. OpenRouter credits with auto top-up off. |
-| OpenRouter keys Karthick made | `basha-hacks-2026-manager` (management key, $50 cap) and `basha-hacks-2026-backup` (regular key, shared fallback) |
+| OpenRouter keys Karthick made | `basha-hacks-2026-managment2` (management key, made on OpenRouter's Management keys page, not the API keys page; it has no spend cap and cannot make AI calls) and `basha-hacks-2026-backup` (regular key, $7 cap, shared fallback) |
 | Keys the platform makes | `bashahacks-team-xxxxxx` at $4 each, and one `bashahacks-test-xxxxxx` at $3 |
 | Model | `openai/gpt-5.6-luna` with thinking level High. Step up if its apps are poor: `anthropic/claude-sonnet-5.5` (about 6 to 10 cents per request, so $4 is only 40 to 65 requests). |
 | Students and money | Students never see dollars, only a usage bar. Dollars appear only in admin. |

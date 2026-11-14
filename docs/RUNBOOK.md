@@ -81,7 +81,7 @@ Check [vercel-status.com](https://www.vercel-status.com). Students' work is save
 ## Spending limits, in one place
 
 - OpenRouter account: $50 of credits, auto top-up off. This is the hard ceiling.
-- Management key: $43 hard spend cap, covering the team keys and the test key.
+- Management key: only makes and adjusts the team keys and the test key. It cannot make AI calls and has no spend cap of its own.
 - Each team key: $4 cap, enforced by OpenRouter. Ten teams fit in the budget at that amount.
 - Model: `openai/gpt-5.6-luna` with the thinking level on High, roughly 2 to 3 cents per request, so $4 is well over 100 requests.
 - If Luna's apps are not good enough: AI tab, **Load models**, pick `anthropic/claude-sonnet-5.5`. It is stronger at coding but costs about 6 to 10 cents per request, so $4 is about 40 to 65 requests.
