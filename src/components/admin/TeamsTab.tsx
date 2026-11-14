@@ -5,6 +5,7 @@ import Avatar from "@/components/Avatar";
 import { ErrorNote, Modal } from "@/components/ui";
 import { api, timeOfDay } from "@/lib/client";
 import type { AdminTeam, AdminTeamDetail } from "@/lib/admin";
+import { percentLeft } from "@/lib/text";
 import type { MemberView } from "@/lib/types";
 import { Empty, Field, Section, Toggle, useAdmin, useBusy, usd } from "./shared";
 
@@ -20,23 +21,23 @@ function OnlineDot({ online }: { online: boolean }) {
 }
 
 function UsageBar({ team }: { team: AdminTeam }) {
-  const pct = team.capUsd > 0 ? Math.min(1, team.spentUsd / team.capUsd) : 1;
   const full = team.spentUsd >= team.capUsd - 0.0005;
-  const tone = full ? "bg-red" : pct > 0.8 ? "bg-amber" : "bg-accent";
+  const used = team.capUsd > 0 ? 100 - percentLeft(1 - team.spentUsd / team.capUsd, full) : 100;
+  const tone = full ? "bg-red" : used > 80 ? "bg-amber" : "bg-accent";
   return (
     <div className="w-40">
       <div
-        className="h-1.5 overflow-hidden rounded-full bg-panel2"
+        className="h-2 overflow-hidden rounded-full bg-panel2"
         role="progressbar"
         aria-label="AI used"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={Math.round(pct * 100)}
+        aria-valuenow={used}
       >
-        <div className={`h-full ${tone}`} style={{ width: `${Math.round(pct * 100)}%` }} />
+        <div className={`h-full ${tone}`} style={{ width: `${used}%`, minWidth: used > 0 ? 4 : 0 }} />
       </div>
       <div className="mono mt-1 text-xs text-muted">
-        {usd(team.spentUsd)} of {usd(team.capUsd)}
+        {usd(team.spentUsd)} of {usd(team.capUsd)} ({used}%)
         {full ? <span className="text-red"> (used up)</span> : null}
       </div>
     </div>

@@ -2,13 +2,22 @@ import { describe, expect, it } from "vitest";
 import { buildSrcdoc } from "../../src/lib/sandbox";
 import { eventBudgetLeft, remainingMs } from "../../src/lib/event";
 import { usageView, type TeamRow } from "../../src/lib/store";
-import { cleanAvatar, cleanText, fmtClock, isRude } from "../../src/lib/text";
+import { cleanAvatar, cleanText, fmtClock, isRude, percentLeft } from "../../src/lib/text";
 import type { EventSettings } from "../../src/lib/types";
 
 const settings = { totalBudgetUsd: 50, aiPausedAll: false } as EventSettings;
 const team = (over: Partial<TeamRow>) => ({ cap_usd: 2.5, spent_usd: 0, ai_paused: false, ...over }) as TeamRow;
 
 describe("AI limits", () => {
+  it("moves the usage bar on the first request and reads 0 only when used up", () => {
+    expect(percentLeft(1)).toBe(100);
+    expect(percentLeft(1 - 0.02 / 4)).toBe(99);
+    expect(percentLeft(0.99)).toBe(99);
+    expect(percentLeft(0.004)).toBe(1);
+    expect(percentLeft(0.3, true)).toBe(0);
+    expect(percentLeft(0)).toBe(0);
+  });
+
   it("shows the share of AI a team has left and never a dollar amount", () => {
     const view = usageView(team({ spent_usd: 1 }), settings, 10);
     expect(view).toEqual({ pctLeft: 0.6, blocked: false, reason: "" });

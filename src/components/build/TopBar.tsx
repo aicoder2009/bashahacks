@@ -1,7 +1,7 @@
 "use client";
 import Avatar from "@/components/Avatar";
 import { Logo, ThemeToggle } from "@/components/ui";
-import { fmtClock } from "@/lib/text";
+import { fmtClock, percentLeft } from "@/lib/text";
 import { timeOfDay } from "@/lib/client";
 import type { SyncResponse } from "@/lib/types";
 
@@ -13,23 +13,26 @@ const STEPS: [string, string][] = [
 ];
 
 export function UsageBar({ pctLeft, blocked }: { pctLeft: number; blocked: boolean }) {
-  const pct = Math.round(pctLeft * 100);
+  const pct = percentLeft(pctLeft, blocked);
   const tone = blocked || pct < 10 ? "bg-red" : pct < 25 ? "bg-amber" : "bg-accent";
   const text = blocked || pct < 10 ? "text-red" : pct < 25 ? "text-amber" : "text-muted";
   return (
     <div className="flex items-center gap-2" title="How much AI help your team has left">
       <span className="label hidden xl:inline">AI usage</span>
       <div
-        className="h-2 w-20 overflow-hidden rounded-full bg-panel2"
+        className="h-2 w-24 overflow-hidden rounded-full bg-panel2"
         role="progressbar"
         aria-label="AI usage left"
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={pct}
       >
-        <div className={`h-full rounded-full ${tone} transition-[width] duration-500`} style={{ width: `${Math.max(pct, 2)}%` }} />
+        <div className={`h-full rounded-full ${tone} transition-[width] duration-500`} style={{ width: `${pct === 100 ? 100 : Math.min(Math.max(pct, 2), 96)}%` }} />
       </div>
-      <span className={`mono text-[0.78rem] ${text}`}>{pct}% left</span>
+      <span className={`mono text-[0.78rem] ${text}`}>
+        <span className="xl:hidden">AI </span>
+        {pct}% left
+      </span>
     </div>
   );
 }

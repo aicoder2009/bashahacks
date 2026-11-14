@@ -66,3 +66,12 @@ export function fmtClock(ms: number): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
+
+/**
+ * Whole percent of AI left, for the usage bars. Rounds down so the first request already reads 99,
+ * and stays at 1 or more until the AI is really used up.
+ */
+export function percentLeft(share: number, usedUp = false): number {
+  if (usedUp || !(share > 0)) return 0;
+  return Math.min(100, Math.max(1, Math.floor(share * 100 + 1e-6)));
+}
