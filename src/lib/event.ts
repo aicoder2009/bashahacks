@@ -4,7 +4,7 @@ import type { EventSettings, PublicEvent } from "./types";
 
 // Saturday Nov 14 2026, Arizona time (UTC-7, no daylight saving).
 const DEFAULT_START = Date.UTC(2026, 10, 14, 16, 30); // 9:30 AM
-const DEFAULT_END = Date.UTC(2026, 10, 14, 19, 30); // 12:30 PM
+const DEFAULT_END = Date.UTC(2026, 10, 14, 20, 0); // 1:00 PM
 
 function defaults(): EventSettings {
   return {
@@ -28,8 +28,9 @@ function defaults(): EventSettings {
     schedule: [
       { time: "9:00", label: "Welcome and intro" },
       { time: "9:30", label: "Building starts" },
-      { time: "12:30", label: "Submissions close, judging and lunch" },
-      { time: "1:30", label: "Winners" },
+      { time: "12:00", label: "Lunch, keep building" },
+      { time: "1:00", label: "Submissions close, presentations" },
+      { time: "1:40", label: "Winners" },
       { time: "2:00", label: "Done" },
     ],
     podium: null,

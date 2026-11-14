@@ -22,9 +22,9 @@ const SCHEDULE: [string, string, string][] = [
   ["9:10", "Welcome", "The theme, the rules, and how judging works."],
   ["9:20", "Workshop: Brief the AI", "How to tell an AI exactly what to build, starting from a real problem."],
   ["9:30", "Building starts", "Short workshops along the way on working with AI properly: one change at a time, testing, debugging, and reading the code."],
-  ["12:30", "Building ends, lunch", "Pizza and soda."],
-  ["12:45", "Presentations", "Each team shows its app on the big screen. Two minutes each."],
-  ["1:30", "Winners", "Third, second, first."],
+  ["12:00", "Lunch", "Pizza and soda. Eat while you build."],
+  ["1:00", "Building ends, presentations", "Each team shows its app on the big screen. Two minutes each."],
+  ["1:40", "Winners", "Third, second, first."],
   ["2:00", "Done", ""],
 ];
 
@@ -40,7 +40,7 @@ const FAQ: [string, string][] = [
   ["Do I need to know how to code?", "No. You describe your app in plain words and the AI writes the code. You will learn how to guide it, fix what breaks, and read a little of the code along the way."],
   ["Can I work with friends?", "Yes. Build solo or in a team of up to 3. You can start solo and invite a teammate later."],
   ["What do I need to bring?", "Your media and liability release forms, signed by a parent. You need them to get a seat. Computers are set up in the room."],
-  ["Is there food?", "Yes. Pizza and soda at lunch."],
+  ["Is there food?", "Yes. Pizza and soda around noon. You can eat while you build."],
   ["What can I build?", "Anything that helps the planet. A food waste tracker, a shower timer, a swap board, a cleanup log. There are starter ideas on the build screen if you are stuck."],
   ["What happens to my app afterward?", "When you press Publish, your app gets its own link. You can share it with family and friends."],
 ];

@@ -19,7 +19,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 
 | Topic | Decision |
 |---|---|
-| Event | Saturday Nov 14, 2026, room K105. Welcome 9:00, building 9:30 to 12:30, judging and lunch, winners 1:30, done 2:00. Arizona time. |
+| Event | Saturday Nov 14, 2026, room K105. Welcome 9:00, building 9:30 to 1:00 with lunch at 12:00 while they build, presentations 1:00, winners 1:40, done 2:00. Arizona time. |
 | Size | About 10 to 15 students expected. Solo or teams of up to 3. |
 | AI budget | $50 total, hard maximum. OpenRouter credits with auto top-up off. |
 | OpenRouter keys Karthick made | `basha-hacks-2026-managment2` (management key, made on OpenRouter's Management keys page, not the API keys page; it has no spend cap and cannot make AI calls) and `basha-hacks-2026-backup` (regular key, $7 cap, shared fallback) |
@@ -44,7 +44,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 9. Send an announcement and see it on the student screen and on the TV link (admin, Settings).
 10. Judging tab: press **Show on TV** next to one app and check it fills the TV, then **Stop showing**. Score both apps at `/judges` on a phone. Check the leaderboard, then run the podium from the Judging tab.
 11. Limits: set one team's AI amount just above what it has spent, confirm it gets blocked, top it up, confirm it works again. This also tests changing a key's limit at OpenRouter.
-12. Settings: **Wipe event data** (type WIPE). Event tab: phase Lobby, auto start on, start 9:30 AM and end 12:30 PM on Nov 14.
+12. Settings: **Wipe event data** (type WIPE). Event tab: phase Lobby, auto start on, start 9:30 AM and end 1:00 PM on Nov 14.
 
 Target: under $1 spent.
 

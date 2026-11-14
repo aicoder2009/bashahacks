@@ -23,7 +23,7 @@ The minute by minute plan with workshops, roles and the setup checklist is in `d
    - Check the starting amount per team. It should be $4.
    - Press **Test AI**. You should get a short friendly sentence back and a tiny cost.
    - Press **Prepare team keys** with 12. The pool should then show 12 free keys. You can make more at any time.
-4. **Event tab**: check the start time (9:30 AM) and end time (12:30 PM), and that Auto start and Auto end are on.
+4. **Event tab**: check the start time (9:30 AM) and end time (1:00 PM), and that Auto start and Auto end are on.
 5. **Settings tab**: copy the TV link, write down the event code and the judge passcode.
 6. Do one practice round with another officer: join as a student, build something, publish, submit, score it at `/judges`, then run the podium from the Judging tab.
 7. When the practice is done: Settings, Danger zone, **Wipe event data** (type WIPE). This clears practice students and scores and keeps your settings and AI keys.
@@ -36,11 +36,12 @@ The minute by minute plan with workshops, roles and the setup checklist is in `d
 | 8:40 | Setup | Open the TV link on the TV computer, press F11 for full screen, click once to turn on sound. Confirm it shows the Lobby with the event code. |
 | 9:00 | Welcome | Students go to the site, press **Check in**, type the event code, pick a name and a character. Watch them pop up on the TV. |
 | 9:30 | Building starts | It starts by itself. If you are running late, turn Auto start off before 9:30 and press **Start building now** when ready. |
-| 9:30 to 12:30 | Building | Walk the room. Send announcements from the Announce tab. Watch the Teams tab for anyone running low on AI. |
-| 12:15 | Reminder | Announce: "15 minutes left. Press Publish, then Submit." |
-| 12:30 | Time is up | Building closes by itself. The TV switches to Judging. |
-| 12:30 to 1:30 | Judging and lunch | Each team shows its app to the room. Judging tab, Leaderboard: press **Show on TV** next to the team, and **Stop showing** when they finish. Use the mouse on the TV computer to click through the app. Judges score on their own phones at `/judges`, and scores never appear on the TV. |
-| 1:30 | Winners | Judging tab: **Lock results and start the winners reveal**, then press Show 3rd place, Show 2nd place, Show 1st place, one at a time. |
+| 9:30 to 1:00 | Building | Walk the room. Send announcements from the Announce tab. Watch the Teams tab for anyone running low on AI. |
+| 12:00 | Lunch | Pizza and soda arrive. Students eat while they build. Announce it from the Announce tab. |
+| 12:45 | Reminder | Announce: "15 minutes left. Press Publish, then Submit." |
+| 1:00 | Time is up | Building closes by itself. The TV switches to Judging. |
+| 1:00 to 1:40 | Presentations and judging | Each team shows its app to the room. Judging tab, Leaderboard: press **Show on TV** next to the team, and **Stop showing** when they finish. Use the mouse on the TV computer to click through the app. Judges score on their own phones at `/judges`, and scores never appear on the TV. |
+| 1:40 | Winners | Judging tab: **Lock results and start the winners reveal**, then press Show 3rd place, Show 2nd place, Show 1st place, one at a time. |
 | 2:00 | Done | Set the phase to Done. |
 
 ## Common situations
