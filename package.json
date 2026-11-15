@@ -2,6 +2,12 @@
   "name": "bashahacks",
   "version": "0.1.0",
   "private": true,
+  "description": "A hackathon platform for beginners: describe an app, an AI builds it, then publish and submit it for judging.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aicoder2009/bashahacks.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

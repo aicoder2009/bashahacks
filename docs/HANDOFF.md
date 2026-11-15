@@ -5,13 +5,13 @@ Written November 13, 2026, the day before the event, so a new Claude session (or
 ## Where things stand
 
 - **Code:** everything is on `main`. Vercel deploys `main` automatically.
-- **Live site:** https://bashahacks.vercel.app, Vercel project `bashahacks` in the team `karthickaruns-projects`. It replaced an older site called Hack the Den at the same address.
+- **Live site:** https://bashahacks.vercel.app, hosted on Vercel.
 - **Tested locally with the fake AI:** the full event (admin, announcements, AI limits, judging, podium), the solo student flow, the team flow, 20 unit tests, a load check, and the production build.
 - **Not tested at all yet:** real AI calls, creating OpenRouter keys, changing a key's limit, and the live site end to end.
 
 ## Database (fixed Nov 13)
 
-A free Neon database, `bashahacks-db`, is connected to the Vercel project in all environments. `/api/health` reports `"ok":true` and the tables have been created.
+A free Neon database is connected to the Vercel project in all environments. `/api/health` reports `"ok":true` and the tables have been created.
 
 Development and Preview point at the same live database. Do not pull the Vercel env vars and run the browser or load tests against them, because those tests would write into the event data. Run the tests against a local Postgres instead.
 
@@ -22,7 +22,7 @@ Development and Preview point at the same live database. Do not pull the Vercel 
 | Event | Saturday Nov 14, 2026, room K105. Welcome 9:00, building 9:30 to 1:00 with lunch at 12:00 while they build, presentations 1:00, winners 1:40, done 2:00. Arizona time. |
 | Size | About 10 to 15 students expected. Solo or teams of up to 3. |
 | AI budget | $50 total, hard maximum. OpenRouter credits with auto top-up off. |
-| OpenRouter keys Karthick made | `basha-hacks-2026-managment2` (management key, made on OpenRouter's Management keys page, not the API keys page; it has no spend cap and cannot make AI calls) and `basha-hacks-2026-backup` (regular key, $7 cap, shared fallback) |
+| OpenRouter keys Karthick made | A management key (made on OpenRouter's Management keys page, not the API keys page; it has no spend cap and cannot make AI calls) and a backup key (regular key, $7 cap, shared fallback) |
 | Keys the platform makes | `bashahacks-team-xxxxxx` at $4 each, and one `bashahacks-test-xxxxxx` at $3 |
 | Model | `openai/gpt-5.6-luna` with thinking level High. Step up if its apps are poor: `anthropic/claude-sonnet-5.5` (about 6 to 10 cents per request, so $4 is only 40 to 65 requests). |
 | Students and money | Students never see dollars, only a usage bar. Dollars appear only in admin. |

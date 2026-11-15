@@ -119,6 +119,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <div class="changes">
     <h3>What changed to match the platform</h3>
     <ul>
+      <li><strong>Every workshop now has a Your turn slide.</strong> The MC talks for about 4 minutes, then the slide stays on the TV while students do the steps on their own app. Roamers walk the room and check the "Done when" line.</li>
+      <li><strong>The workshops now teach how an app is built,</strong> not only how to talk to the AI: see, do, remember (1), build order (2), the usual causes of bugs (3), what to spot in the code (4), and a neighbor test (5).</li>
+      <li><strong>One officer is out today.</strong> The check-in lead takes the photos after check-in. The floor lead gets the one shot of the check-in line.</li>
       <li><strong>Times now match the platform timer.</strong> Building is 9:30 to 1:00 and it starts and stops on its own, so nobody has to switch a phase.</li>
       <li><strong>Students join during check-in.</strong> They go to the site, press Check in, type the event code from the TV, then pick a name, a character, and solo or team.</li>
       <li><strong>The deadline is Publish, then Submit.</strong> Submit asks what problem the app solves, and judges read that while they score. The Teams tab marks who has submitted.</li>
@@ -149,8 +152,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <li><label><input type="checkbox" id="s10"><span>Prizes ready: gift cards from the club sponsor</span></label></li>
     <li><label><input type="checkbox" id="s11"><span>Judges have the judge passcode (Settings), can open /judges on their phones, and know the five things they score</span></label></li>
     <li><label><input type="checkbox" id="s12"><span>Agree on the backup plan if the wifi or AI goes down (students can still edit code by hand, publish and submit)</span></label></li>
-    <li><label><input type="checkbox" id="s13"><span>Karthick: a second window joined as a student for the workshop demos (the recycling tracker). It counts as a team: it uses one team key and shows on the TV, so name it something like "Demo" and do not submit it</span></label></li>
-    <li><label><input type="checkbox" id="s14"><span>Ankit: phone or camera charged, storage cleared, shared album ready for the photos</span></label></li>
+    <li><label><input type="checkbox" id="s13"><span>MC: a second window joined as a student for the workshop demos (the recycling tracker). It counts as a team: it uses one team key and shows on the TV, so name it something like "Demo" and do not submit it</span></label></li>
+    <li><label><input type="checkbox" id="s14"><span>Check-in lead: phone charged, storage cleared, shared album ready for the photos</span></label></li>
   </ul>
   <div><button class="reset" type="button" data-reset="setup">Clear checks</button></div>
 </section>
@@ -161,20 +164,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <table>
     <thead><tr><th>Time</th><th>What happens</th><th>Lead</th></tr></thead>
     <tbody>
-      <tr class="key"><td class="time">9:00</td><td>Check-in and join<span class="tag key">doors</span><span class="note">Check names on the Luma list and collect parent-signed media and liability releases. No form, no seat. At their seat, each student opens the site, presses Check in, types the event code from the TV, then picks a name, a character, and solo or a team of up to 3. They pop up on the TV. Put a sticker on the prompt card of anyone whose release says no photos, so Ankit knows to skip them.</span></td><td class="who">Caden</td></tr>
-      <tr><td class="time">9:10</td><td>Welcome and kickoff (10 min)<span class="note">Who we are, the theme, the rules, prizes, how judging works (five things, each scored by the judges), and the schedule.</span></td><td class="who">Karthick</td></tr>
-      <tr class="ws"><td class="time">9:20</td><td>Workshop 1: Brief the AI<span class="tag ws">10 min</span><span class="note">Building is still closed, so this one is off the computer: the 4-part prompt formula, then students write a first prompt on their card. Roamers check it.</span></td><td class="who">Karthick</td></tr>
-      <tr class="key"><td class="time">9:30</td><td>Building starts<span class="tag key">automatic</span><span class="note">The timer starts it. Karthick opens with a 5 minute live demo on the TV: a vague prompt, then a clear one, and a quick tour of chat, preview and code. Then students pick a topic or type the prompt from their card. Running late? Turn Auto start off before 9:30 and press Start building now when ready.</span></td><td class="who">Karthick</td></tr>
-      <tr class="ws"><td class="time">10:00</td><td>Workshop 2: One change, then test<span class="tag ws">10 min</span></td><td class="who">Karthick</td></tr>
-      <tr class="ws"><td class="time">10:45</td><td>Workshop 3: Debug it properly<span class="tag ws">10 min</span></td><td class="who">Karthick</td></tr>
-      <tr class="ws"><td class="time">11:30</td><td>Workshop 4: Read what it wrote<span class="tag ws">10 min</span></td><td class="who">Karthick</td></tr>
-      <tr class="key"><td class="time">12:00</td><td>Lunch: pizza and soda<span class="tag key">food</span><span class="note">Building keeps going. Students grab food and eat at their seats while they build. Send "Lunch is here" from the Announce tab. Napkins on every table, drinks kept off the desks if you can.</span></td><td class="who">Shubh</td></tr>
-      <tr class="ws"><td class="time">12:20</td><td>Workshop 5: Check it, then ship it<span class="tag ws">10 min</span><span class="note">Everyone presses Publish and Submit once during this workshop. They can keep building and submit again.</span></td><td class="who">Karthick</td></tr>
-      <tr><td class="time">12:45</td><td>Last call<span class="note">Send from the Announce tab: "15 minutes left. Press Publish, then Submit." Roamers check the Teams tab for anyone who has not submitted.</span></td><td class="who">Caden, Shubh</td></tr>
-      <tr class="key"><td class="time">1:00</td><td>Building closes<span class="tag key">automatic</span><span class="note">The timer closes building and the TV switches to Judging. Someone not submitted? Overview, +5 min reopens it for five minutes. Clear plates and boxes off the desks.</span></td><td class="who">Karthick, Shubh</td></tr>
-      <tr class="key"><td class="time">1:00</td><td>Presentations on the TV (40 min)<span class="tag key">judges</span><span class="note">Judging tab, Leaderboard: press Show on TV next to a team, and Stop showing when they finish. Each team gets 2 minutes and clicks through their app with the mouse on the TV computer. Judges score on their phones at /judges. Scores never show on the TV.</span></td><td class="who">Karthick, judges</td></tr>
-      <tr class="key"><td class="time">1:40</td><td>Winners<span class="tag key">prizes</span><span class="note">Check every judge has finished. Then Lock results and start the winners reveal, and press Show 3rd place, Show 2nd place, Show 1st place. Top projects get gift cards.</span></td><td class="who">Karthick, Ankit (photos)</td></tr>
-      <tr><td class="time">1:50</td><td>Group photo and closing<span class="note">Group photo for students with media releases. Thank the sponsor and the judges. Published apps stay online at their links.</span></td><td class="who">Karthick, Ankit</td></tr>
+      <tr class="key"><td class="time">9:00</td><td>Check-in and join<span class="tag key">doors</span><span class="note">Check names on the Luma list and collect parent-signed media and liability releases. No form, no seat. At their seat, each student opens the site, presses Check in, types the event code from the TV, then picks a name, a character, and solo or a team of up to 3. They pop up on the TV. Put a sticker on the prompt card of anyone whose release says no photos, so the check-in lead knows to skip them in photos.</span></td><td class="who">Check-in lead</td></tr>
+      <tr><td class="time">9:10</td><td>Welcome and kickoff (10 min)<span class="note">Who we are, the theme, the rules, prizes, how judging works (five things, each scored by the judges), and the schedule.</span></td><td class="who">MC</td></tr>
+      <tr class="ws"><td class="time">9:20</td><td>Workshop 1: Brief the AI<span class="tag ws">10 min</span><span class="note">Building is still closed, so this one is off the computer: the 4-part brief, then from 9:24 students write their brief on the card and swap cards with a neighbor at 9:28. Roamers walk the room and check cards.</span></td><td class="who">MC</td></tr>
+      <tr class="key"><td class="time">9:30</td><td>Building starts<span class="tag key">automatic</span><span class="note">The timer starts it. The MC opens with a 5 minute live demo on the TV: a vague prompt, then a clear one, and a quick tour of chat, preview and code. Then the Send your brief slide goes up and students type the brief from their card, or pick a topic. Roamers help anyone who has not sent a first message. Running late? Turn Auto start off before 9:30 and press Start building now when ready.</span></td><td class="who">MC</td></tr>
+      <tr class="ws"><td class="time">10:00</td><td>Workshop 2: One change, then test<span class="tag ws">10 min</span><span class="note">Your turn from 10:04: one change, then three tests on their own app. Roamers walk the room.</span></td><td class="who">MC</td></tr>
+      <tr class="ws"><td class="time">10:45</td><td>Workshop 3: Debug it properly<span class="tag ws">10 min</span><span class="note">Your turn from 10:49: break your own app and send one bug report. Roamers walk the room.</span></td><td class="who">MC</td></tr>
+      <tr class="ws"><td class="time">11:30</td><td>Workshop 4: Read what it wrote<span class="tag ws">10 min</span><span class="note">Your turn from 11:34: change a word and a color by hand in the Code tab. Roamers walk the room.</span></td><td class="who">MC</td></tr>
+      <tr class="key"><td class="time">12:00</td><td>Lunch: pizza and soda<span class="tag key">food</span><span class="note">Building keeps going. Students grab food and eat at their seats while they build. Send "Lunch is here" from the Announce tab. Napkins on every table, drinks kept off the desks if you can.</span></td><td class="who">Floor lead</td></tr>
+      <tr class="ws"><td class="time">12:20</td><td>Workshop 5: Check it, then ship it<span class="tag ws">10 min</span><span class="note">Your turn from 12:21: every team presses Publish and Submit once during this workshop. They can keep building and submit again. Roamers watch the Teams tab for who has submitted.</span></td><td class="who">MC</td></tr>
+      <tr><td class="time">12:45</td><td>Last call<span class="note">Send from the Announce tab: "15 minutes left. Press Publish, then Submit." Roamers check the Teams tab for anyone who has not submitted.</span></td><td class="who">Check-in lead, Floor lead</td></tr>
+      <tr class="key"><td class="time">1:00</td><td>Building closes<span class="tag key">automatic</span><span class="note">The timer closes building and the TV switches to Judging. Someone not submitted? Overview, +5 min reopens it for five minutes. Clear plates and boxes off the desks.</span></td><td class="who">MC, Floor lead</td></tr>
+      <tr class="key"><td class="time">1:00</td><td>Presentations on the TV (40 min)<span class="tag key">judges</span><span class="note">Judging tab, Leaderboard: press Show on TV next to a team, and Stop showing when they finish. Each team gets 2 minutes and clicks through their app with the mouse on the TV computer. Judges score on their phones at /judges. Scores never show on the TV.</span></td><td class="who">MC, judges</td></tr>
+      <tr class="key"><td class="time">1:40</td><td>Winners<span class="tag key">prizes</span><span class="note">Check every judge has finished. Then Lock results and start the winners reveal, and press Show 3rd place, Show 2nd place, Show 1st place. Top projects get gift cards.</span></td><td class="who">MC, Check-in lead (photos)</td></tr>
+      <tr><td class="time">1:50</td><td>Group photo and closing<span class="note">Group photo for students with media releases. Thank the sponsor and the judges. Published apps stay online at their links.</span></td><td class="who">MC, Check-in lead</td></tr>
       <tr><td class="time">2:00</td><td>Done<span class="note">Set the phase to Done. Download results (CSV) from the Judging tab. Log out of every computer, collect cards, trash out.</span></td><td class="who">All officers</td></tr>
     </tbody>
   </table>
@@ -185,7 +188,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <h2 id="workshops">Workshop guide</h2>
   <p class="lede"><strong>Vibe coding</strong> is typing a wish, accepting whatever comes out, and hoping. <strong>Working with an AI coding agent</strong> is different: the AI reads your files and rewrites them, and you are the engineer in charge. You tell it exactly what you want, check everything it does, and keep versions you can go back to. The five workshops are the five habits that make that work.</p>
   <p class="lede">Say this once at kickoff: <strong>the AI is a fast but careless intern, and you are the boss.</strong> It does what you say, guesses when you are vague, and is sometimes wrong without telling you.</p>
-  <p class="lede">Run each one as <strong>I do, we do, you do</strong>: demo it live (4 to 5 min), everyone tries the same thing together (3 min), then they use it on their own project. Use one running example all day, a school recycling tracker, so each demo picks up where the last one ended.</p>
+  <p class="lede">Run each one in <strong>three beats</strong>: one minute on the habit, a 3 minute live demo, then the Your turn slide stays on the TV while everyone does it on their own app (5 minutes or more). Once that slide is up, stop talking and walk the room. Each Your turn slide ends with a "Done when" line, so a roamer can ask any student to show it. Use one running example all day, a school recycling tracker, so each demo picks up where the last one ended.</p>
 
   <div class="cards">
     <article class="card">
@@ -193,9 +196,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <dl>
         <dt>Habit</dt><dd>Give the AI a clear brief before it writes anything, and get a plan before code.</dd>
         <dt>Why</dt><dd>The AI only knows what is in your message and your files. Anything you leave out, it guesses.</dd>
-        <dt>Teach</dt><dd>At 9:20, off the computer. A good brief has four parts, on the card: who uses it, what real problem it solves, what it does (2 or 3 things, not 10), how it looks. Start from a sustainability problem you have actually seen. "Stop climate change" is not an app. "Help my family waste less food" is.</dd>
-        <dt>Demo</dt><dd>At 9:30, as soon as building opens. First the vibe version: "make a recycling app". Show the generic result. Then the brief: "Students at my school use this to log what they recycled today. Show a running total and a simple chart. Green and white colors." Compare. Then show planning: "Do not build yet. Tell me your plan in three steps." The AI answers in words and changes no code.</dd>
-        <dt>Try it</dt><dd>Students write their four-part brief on the card before they type anything.</dd>
+        <dt>Teach</dt><dd>At 9:20, off the computer. A good brief has four parts, on the card: who uses it, what real problem it solves, what it does (2 or 3 things, not 10), how it looks. Part three is the app itself, and every app is three things: what you see, what you can do, and what it remembers. Start from a sustainability problem you have actually seen. "Stop climate change" is not an app. "Help my family waste less food" is.</dd>
+        <dt>Demo</dt><dd>At 9:30, as soon as building opens. First the vibe version: "make a recycling app". Show the generic result. Then the brief: "Students at my school use this to log what they recycled today. Show a running total and a simple chart. Green and white colors." Compare. Five minutes at most. Then put up the Send your brief slide and show planning once: "Do not build yet. Tell me your plan in three steps." The AI answers in words and changes no code. Point out that the AI builds a small version 1 with one main feature and says what it left out. That list is their next changes.</dd>
+        <dt>Your turn</dt><dd>9:24 to 9:30, pen and card. Students write their four-part brief. For "what it does" they write what you see, what you do, and what it remembers. Then they swap cards at 9:28 and circle anything their neighbor left vague. Done when a neighbor can say back what the app does. After the 9:30 demo they type the brief and send it, or ask for a plan first.</dd>
       </dl>
     </article>
 
@@ -204,9 +207,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <dl>
         <dt>Habit</dt><dd>Ask for one change, test it yourself, then ask for the next.</dd>
         <dt>Why</dt><dd>The AI never runs your app. It writes the code and assumes it works. You are the only tester. If you ask for six things and something breaks, you cannot tell which one did it.</dd>
-        <dt>Demo</dt><dd>Add to the tracker: "Add a weekly goal of 100 items and show how close we are. Keep everything else the same." Then test like a user: click every button, type nothing and press Add, refresh the page and check the data is still there. Then ask for six features at once and show how hard it is to find what broke.</dd>
-        <dt>Teach</dt><dd>The loop on the card: Ask, Test, Keep or Undo. Say what should not change. Every AI change is saved in History, so each working version is a save point you can return to. Small requests also use less of the AI usage bar.</dd>
-        <dt>Try it</dt><dd>Everyone makes one small request, then tests three things: every button, an empty input, a refresh.</dd>
+        <dt>Demo</dt><dd>Add to the tracker: "Add a weekly goal of 100 items and show how close we are. Keep everything else the same." Then test like a user: ask the room what to try to break, then do it. Click every button, type nothing and press Add, press Restart and check the data is still there. Only if there is time: ask for six features at once and show how hard it is to find what broke.</dd>
+        <dt>Teach</dt><dd>Build in this order: make the one main thing work, check it remembers after Restart, add the next feature one at a time, make it look good last. Then the loop on the card: Ask, Test, Keep or Undo. Say what should not change. Every AI change is saved in History, so each working version is a save point you can return to. Small requests also use less of the AI usage bar.</dd>
+        <dt>Your turn</dt><dd>10:04 to 10:10, on their own app. Ask for the next step only and add "Keep everything else the same." Then three tests: click every button, leave a box empty and press the button, press Restart and check what they saved is still there. Done when all three tests pass, or they pressed Undo.</dd>
       </dl>
     </article>
 
@@ -215,9 +218,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <dl>
         <dt>Habit</dt><dd>When something breaks, report it like an engineer and find the cause before the fix.</dd>
         <dt>Why</dt><dd>"It's broken, fix it" makes the AI guess, and a wrong guess adds a second bug on top of the first.</dd>
-        <dt>Demo</dt><dd>Break the tracker on purpose. Show the three moves in order. One: the yellow error bar and Ask AI to fix this. Two: a real bug report, "When I press Add with an empty box, I expected nothing to happen, but instead it added a blank row." Three: "Explain what is causing this before you change anything."</dd>
+        <dt>Demo</dt><dd>Break the tracker on purpose before the workshop, so there is a real bug on the screen. Show the three moves in order, and have the room fill in the blanks of the bug report before you type it. One: the yellow error bar. Read the message out loud, then press Ask AI to fix this. Two: a real bug report, "When I press Add with an empty box, I expected nothing to happen, but instead it added a blank row." Three: "Explain what is causing this before you change anything."</dd>
         <dt>Teach</dt><dd>The bug report on the card: what I did, what I expected, what happened instead. If two fixes in a row fail, stop. Press Undo or open History, go back to the last version that worked, and ask for it a different way. Piling fix on fix is how apps get wrecked.</dd>
-        <dt>Try it</dt><dd>Everyone tries to break their own app on purpose (empty inputs, huge numbers, clicking fast) and writes one bug report.</dd>
+        <dt>Your turn</dt><dd>10:49 to 10:55. Three tests, each with its usual cause on the slide. Press the button with an empty box (a blank item means nothing checks the box). Type a word where a number goes (NaN means Not a Number: it did math on a word). Press Restart (data gone means it was never saved). Found one? Send the bug report from the card and ask for the cause first. No bug yet? Swap seats and try to break a neighbor’s. Done when they have sent one bug report and read the cause.</dd>
       </dl>
     </article>
 
@@ -226,9 +229,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <dl>
         <dt>Habit</dt><dd>Look at what the AI changed, and do not keep code you cannot explain at all.</dd>
         <dt>Why</dt><dd>It is your app. Judges will ask how it works, and the AI is sometimes wrong in ways you only see by reading.</dd>
-        <dt>Demo</dt><dd>Open the Code tab. Every app here is three files: index.html is what is on the page, style.css is how it looks, script.js is what it does. Dots mark the lines the AI changed last. Ask: "Explain what you just changed and why, like I'm new to coding." Then change a heading and the weekly goal by hand and watch the preview update.</dd>
+        <dt>Demo</dt><dd>Open the Code tab. Every app here is three files: index.html is what is on the page, style.css is how it looks, script.js is what it does. Dots mark the lines the AI changed last. Ask: "Explain what you just changed and why, like I'm new to coding." Then change a heading and the weekly goal by hand and watch the preview update. Ask the room which file each change lives in before you open it. Then open script.js and find four things with the room: a comment, a variable, an event (what runs when you press a button), and where it saves with localStorage.</dd>
         <dt>Teach</dt><dd>Words, colors and numbers are faster to change by hand and use no AI. The AI sees your current code every time, including your edits, but only the last few chat messages. If something matters, like "keep it green and white", say it again. Check facts too: if the app says a number about water or plastic, look it up, the AI may have made it up.</dd>
-        <dt>Try it</dt><dd>Everyone finds one line in script.js, asks the AI what it does, and changes one word, color or number by hand. This is step 4 of the guide on their screen.</dd>
+        <dt>Your turn</dt><dd>11:34 to 11:40. Open the Code tab. Change one word in index.html and check the Preview. Change one color in style.css. In script.js, find a comment, a variable, and where it saves. Pick one line they do not get and ask the AI what it does. Done when they can point at one line and say what it does. This is step 4 of the guide on their screen.</dd>
       </dl>
     </article>
 
@@ -237,8 +240,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
       <dl>
         <dt>Habit</dt><dd>Before you ship, test the whole thing from the start as if you had never seen it.</dd>
         <dt>Why</dt><dd>The AI will tell you it is done. Only you can say it is ready.</dd>
-        <dt>Demo</dt><dd>Run the final check on the tracker: press Restart and use it start to finish, read every word on the screen, look up any fact or number. Then press Publish and open the link, and press Submit and fill in the title, the problem and how the app solves it.</dd>
+        <dt>Demo</dt><dd>Two minutes at most on the tracker: press Restart, use it start to finish, then press Publish and open the link. Do not submit the Demo team.</dd>
         <dt>Teach</dt><dd>Judges score five things: sustainability impact, creativity, does it work, design and ease of use, and presentation. Submit now. You can keep building and submit again until 1:00, and judges see the newest version. From here on, only make small safe changes and test each one.</dd>
+        <dt>Your turn</dt><dd>12:21 to 12:30, every team. Press Restart and use the app start to finish. Look up every fact and number. Press Publish and open the link. Press Submit and fill in the title, the problem and how the app solves it. Done when the screen says Submitted. After that, the neighbor test: hand the app to a neighbor, say nothing, fix where they get stuck, and submit again.</dd>
         <dt>Presenting</dt><dd>Two minutes at the TV: the problem you noticed, who it helps, a live demo, one thing you would add next. Be ready to point at one part of the code and say what it does.</dd>
       </dl>
     </article>
@@ -279,17 +283,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 <section aria-labelledby="roles">
   <h2 id="roles">Officer roles</h2>
   <div class="roles">
-    <div class="role"><h3>Karthick</h3><p>MC, kickoff, all five workshops, presentations and winners. Also runs the admin page: watches the timer and the AI budget, presses Show on TV for each team, and runs the winners reveal.</p></div>
-    <div class="role"><h3>Caden</h3><p>Check-in from 9:00 to 9:30: Luma list, release forms, no-photo stickers, seats, helping students join. Stays near the door for late arrivals, then roams for the rest of the day.</p></div>
-    <div class="role"><h3>Shubh</h3><p>Roams from 9:30 on, with the admin Teams tab open to add AI for anyone who runs out. Meets the pizza delivery at 11:50, sets up the food table, hands out napkins, and clears plates and boxes before presentations at 1:00.</p></div>
-    <div class="role"><h3>Ankit</h3><p>Photos all day, following the shot list below. Helps roam during long build stretches when there is nothing to shoot.</p></div>
+    <div class="role"><h3>MC</h3><p>Kickoff, all five workshops, presentations and winners. Also runs the admin page: watches the timer and the AI budget, presses Show on TV for each team, and runs the winners reveal.</p></div>
+    <div class="role"><h3>Check-in lead</h3><p>Check-in from 9:00 to 9:30: Luma list, release forms, no-photo stickers, seats, helping students join. Stays near the door for late arrivals, then roams for the rest of the day and takes the photos from the shot list below. Helping a stuck student comes before a photo.</p></div>
+    <div class="role"><h3>Floor lead</h3><p>Takes one photo of the check-in line at 9:00. Roams from 9:30 on, with the admin Teams tab open to add AI for anyone who runs out. Meets the pizza delivery at 11:50, sets up the food table, hands out napkins, and clears plates and boxes before presentations at 1:00.</p></div>
   </div>
   <div class="script">
-    <h3>Photo shot list (Ankit)</h3>
+    <h3>Photo shot list (check-in lead)</h3>
     <p>Only photograph students without a sticker on their prompt card. When in doubt, shoot from behind or focus on screens.</p>
     <ul>
-      <li>9:00: check-in line and the room filling up</li>
-      <li>9:10: Karthick presenting the kickoff, wide shot of the room</li>
+      <li>9:00: check-in line and the room filling up (floor lead, while the check-in lead checks students in)</li>
+      <li>9:10: the MC presenting the kickoff, wide shot of the room</li>
       <li>9:20 to 12:10: one or two shots of each workshop demo</li>
       <li>9:30 on: students building, close-ups of screens with chat and preview</li>
       <li>12:00: lunch, students eating while they build</li>
@@ -300,6 +303,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   </div>
   <div class="script">
     <h3>Roamer script</h3>
+    <p>During a workshop: when the Your turn slide goes up, walk the room. Ask each team to show you the "Done when" line on the TV.</p>
     <p>When a student is stuck, ask before you fix:</p>
     <ul>
       <li><q>What did you tell it?</q></li>

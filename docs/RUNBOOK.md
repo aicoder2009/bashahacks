@@ -2,6 +2,8 @@
 
 DevOps Basha Hacks, Saturday November 14, room K105, 9:00 AM to 2:00 PM.
 
+Running your own event with this platform? The times, dollar amounts and model names below are the ones this event used. Swap in your own.
+
 The minute by minute plan with workshops, roles and the setup checklist is in `docs/day-of-schedule.html`.
 
 ## The four links
@@ -15,7 +17,7 @@ The minute by minute plan with workshops, roles and the setup checklist is in `d
 
 ## The night before (Friday)
 
-1. Open the site on a school computer. If the school filter blocks it, tell Karthick right away.
+1. Open the site on a school computer. If the school filter blocks it, tell the lead organizer right away.
 2. Log in at `/admin`.
 3. **AI tab**
    - Press **Check OpenRouter balance**. It should show about $50. Auto top-up must be off in the OpenRouter account.
